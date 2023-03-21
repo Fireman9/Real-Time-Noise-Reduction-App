@@ -135,7 +135,9 @@ int AudioStream::process_callback(const void* inputBuffer, void* outputBuffer,
         ////            *out++ = FUZZ(*in++);  /* right - distorted */
         //            *out++ = *in++;          /*  clean */
         //        }
-        IIR::fo_hpf(in, out, framesPerBuffer, 50, 44100);
+        for (i = 0; i < framesPerBuffer; i++) {
+            *out++ = *in++;
+        }
     }
 
     return paContinue;

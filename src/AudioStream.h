@@ -8,7 +8,6 @@
 #include "portaudio.h"
 
 #include "AudioStreamException.h"
-#include "Filters/IIR.h"
 
 class AudioStream
 {
