@@ -1,15 +1,13 @@
 #ifndef AUDIO_FILE_H
 #define AUDIO_FILE_H
 
-#include <functional>
 #include <string>
 #include <vector>
-#include <cmath>
 
 #include "sndfile.h"
 
-#include "../Filters/IIR.h"
-#include "../SpectralGating.h"
+#include "../Filters/Kalman.h"
+#include "../Filters/NoiseGate.h"
 
 using std::string;
 using std::vector;
@@ -39,19 +37,8 @@ class ProcessAudioFile
   public:
     ProcessAudioFile(string in_filename, string out_filename);
 
-    void filter_audio_file(
-        std::function<void(const float*, float*, unsigned long, float, float)>
-            process_function);
-    void filter_audio_file_by_frames(
-        std::function<void(const float*, float*, unsigned long, float, float)>
-            process_function,
-        unsigned long framesPerBuffer);
-
-    // TODO: shorter function names
-    void spectral_noise_gate_audio_file(int fftSize, float threshold);
-    void
-    spectral_noise_gate_audio_file_by_frames(int fftSize, float threshold,
-                                             unsigned long framesPerBuffer);
+    void kalman(unsigned long framesPerBuffer);
+    void noise_gate(float threshold);
 };
 
 #endif // AUDIO_FILE_H

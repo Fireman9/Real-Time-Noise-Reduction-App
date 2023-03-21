@@ -64,37 +64,27 @@ void ProcessAudioFile::close()
     sf_close(m_out_file);
 }
 
-void ProcessAudioFile::filter_audio_file(
-    std::function<void(const float*, float*, unsigned long, float, float)>
-        process_function)
+void ProcessAudioFile::kalman(unsigned long framesPerBuffer)
 {
     open();
     read();
 
-    process_function(&m_in_audio_data[0], &m_out_audio_data[0], m_total_frames,
-                     50, 44100);
-
-    write();
-    close();
-}
-
-void ProcessAudioFile::filter_audio_file_by_frames(
-    std::function<void(const float*, float*, unsigned long, float, float)>
-        process_function,
-    unsigned long framesPerBuffer)
-{
-    open();
-    read();
+    double Q = 0.01;
+    double R = 0.1;
+    Kalman filter(Q, R);
 
     for (int i = 0; i < std::ceil(m_total_frames / framesPerBuffer); i++) {
         if (i * framesPerBuffer > m_total_frames) {
-            process_function(&m_in_audio_data[i * framesPerBuffer],
-                             &m_out_audio_data[i * framesPerBuffer],
-                             i * framesPerBuffer - m_total_frames, 50, 44100);
+            for (int j = i * framesPerBuffer; j < m_total_frames; j++) {
+                double x_hat = filter.update(m_in_audio_data[j]);
+                m_out_audio_data[j] = x_hat;
+            }
         } else {
-            process_function(&m_in_audio_data[i * framesPerBuffer],
-                             &m_out_audio_data[i * framesPerBuffer],
-                             framesPerBuffer, 50, 44100);
+            for (int j = i * framesPerBuffer; j < (i + 1) * framesPerBuffer;
+                 j++) {
+                double x_hat = filter.update(m_in_audio_data[j]);
+                m_out_audio_data[j] = x_hat;
+            }
         }
     }
 
@@ -102,37 +92,13 @@ void ProcessAudioFile::filter_audio_file_by_frames(
     close();
 }
 
-void ProcessAudioFile::spectral_noise_gate_audio_file(int fftSize,
-                                                      float threshold)
+void ProcessAudioFile::noise_gate(float threshold)
 {
     open();
     read();
 
-    SpectralNoiseGating sng(fftSize, threshold);
-    sng.process(&m_in_audio_data[0], &m_out_audio_data[0], m_total_frames);
-
-    write();
-    close();
-}
-
-void ProcessAudioFile::spectral_noise_gate_audio_file_by_frames(
-    int fftSize, float threshold, unsigned long framesPerBuffer)
-{
-    open();
-    read();
-
-    SpectralNoiseGating sng(fftSize, threshold);
-    for (int i = 0; i < std::ceil(m_total_frames / framesPerBuffer); i++) {
-        if (i * framesPerBuffer > m_total_frames) {
-            sng.process(&m_in_audio_data[i * framesPerBuffer],
-                        &m_out_audio_data[i * framesPerBuffer],
-                        i * framesPerBuffer - m_total_frames);
-        } else {
-            sng.process(&m_in_audio_data[i * framesPerBuffer],
-                        &m_out_audio_data[i * framesPerBuffer],
-                        framesPerBuffer);
-        }
-    }
+    NoiseGate ng(threshold);
+    ng.process(m_in_audio_data.data(), m_out_audio_data.data(), m_total_frames);
 
     write();
     close();
