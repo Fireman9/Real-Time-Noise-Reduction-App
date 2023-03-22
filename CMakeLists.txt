@@ -9,7 +9,7 @@ link_directories("C:/vcpkg/installed/x64-windows/lib")
 
 set(HEADERS src/AudioStream.h src/AudioStreamException.h
     src/AudioFile/AudioFile.h src/Filters/Kalman.h
-    src/Filters/NoiseGate.h)
+    src/Filters/AdaptiveKalman.h src/Filters/NoiseGate.h)
 
 set(SOURCES src/main.cpp src/AudioStream.cpp
     src/AudioStreamException.cpp src/AudioFile/AudioFile.cpp)

@@ -6,6 +6,7 @@
 
 #include "sndfile.h"
 
+#include "../Filters/AdaptiveKalman.h"
 #include "../Filters/Kalman.h"
 #include "../Filters/NoiseGate.h"
 
@@ -38,6 +39,7 @@ class ProcessAudioFile
     ProcessAudioFile(string in_filename, string out_filename);
 
     void kalman(unsigned long framesPerBuffer);
+    void adaptive_kalman(unsigned long framesPerBuffer);
     void noise_gate(float threshold);
 };
 

@@ -92,6 +92,32 @@ void ProcessAudioFile::kalman(unsigned long framesPerBuffer)
     close();
 }
 
+void ProcessAudioFile::adaptive_kalman(unsigned long framesPerBuffer)
+{
+    open();
+    read();
+
+    AdaptiveKalmanFilter filter(0, 1, 0.01, 0.1, 0.95);
+
+    for (int i = 0; i < std::ceil(m_total_frames / framesPerBuffer); i++) {
+        if (i * framesPerBuffer > m_total_frames) {
+            for (int j = i * framesPerBuffer; j < m_total_frames; j++) {
+                double x_hat = filter.update(m_in_audio_data[j]);
+                m_out_audio_data[j] = x_hat;
+            }
+        } else {
+            for (int j = i * framesPerBuffer; j < (i + 1) * framesPerBuffer;
+                 j++) {
+                double x_hat = filter.update(m_in_audio_data[j]);
+                m_out_audio_data[j] = x_hat;
+            }
+        }
+    }
+
+    write();
+    close();
+}
+
 void ProcessAudioFile::noise_gate(float threshold)
 {
     open();

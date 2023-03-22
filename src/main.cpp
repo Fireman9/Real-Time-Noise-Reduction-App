@@ -27,6 +27,7 @@ void audio_file_test()
         "C:/Users/Admin/Downloads/noise_train_AirportAnnouncements_8.wav",
         "C:/Users/Admin/Downloads/done.wav");
     // audio_file.kalman(64);
+    audio_file.adaptive_kalman(64);
     // TODO: check params: frames per buffer everywhere, fft_size, threshold in
     // sng
     // audio_file.filter_audio_file(IIR::fo_hpf);
@@ -34,7 +35,7 @@ void audio_file_test()
 
     // audio_file.spectral_noise_gate_audio_file(1024, 16);
     // audio_file.spectral_noise_gate_audio_file_by_frames(2048, 16, 64);
-    audio_file.noise_gate(-60);
+    // audio_file.noise_gate(-60);
 }
 
 int main()
