@@ -7,7 +7,7 @@ from keras.optimizers import Adam
 from keras.callbacks import CSVLogger, EarlyStopping, ReduceLROnPlateau, \
     ModelCheckpoint
 
-from DatasetGenerator import DatasetGenerator
+from ModelDatasetGenerator import ModelDatasetGenerator
 
 
 # TODO: remove
@@ -181,7 +181,7 @@ class Model():
 
     def train_model(self, run_name,
                     path_train_noisy, path_train_clean,
-                    path_test_noisy, path_test_clean):
+                    path_valid_noisy, path_valid_clean):
         """
         Method to train the model.
 
@@ -189,8 +189,8 @@ class Model():
             run_name (str): name of training run
             path_train_noisy (str): path to train noised audio
             path_train_clean (str): path to train clean audio
-            path_test_noisy (str): path to test noised audio
-            path_test_clean (str): path to test clean audio
+            path_valid_noisy (str): path to validation noised audio
+            path_valid_clean (str): path to validation clean audio
         """
 
         # create save path for model if not created
@@ -213,8 +213,7 @@ class Model():
                                       monitor='val_loss',
                                       verbose=1,
                                       save_best_only=True,
-                                      save_weights_only=True
-                                      )
+                                      save_weights_only=True)
 
         # audio chunks length in samples
         audio_chunks_len = int(np.fix(
@@ -222,27 +221,27 @@ class Model():
         ) * self.block_shift)
 
         # dataset generator for training data
-        generator_train = DatasetGenerator(path_train_noisy,
-                                           path_train_clean,
-                                           audio_chunks_len,
-                                           self.sr, True)
+        generator_train = ModelDatasetGenerator(path_train_noisy,
+                                                path_train_clean,
+                                                audio_chunks_len,
+                                                self.sr, True)
         dataset = generator_train.tf_dataset
         dataset = dataset.batch(self.batch_size, drop_remainder=True).repeat()
 
         # calculate training steps in one epoch
         train_steps = generator_train.total_samples // self.batch_size
 
-        # dataset generator for testing data
-        generator_test = DatasetGenerator(path_test_noisy,
-                                          path_test_clean,
-                                          audio_chunks_len,
-                                          self.sr)
-        dataset_test = generator_test.tf_dataset
-        dataset_test = dataset_test.batch(
+        # dataset generator for validation data
+        generator_valid = ModelDatasetGenerator(path_valid_noisy,
+                                               path_valid_clean,
+                                               audio_chunks_len,
+                                               self.sr)
+        dataset_valid = generator_valid.tf_dataset
+        dataset_valid = dataset_valid.batch(
             self.batch_size, drop_remainder=True).repeat()
 
-        # calculate test steps
-        test_steps = generator_test.total_samples // self.batch_size
+        # calculate validation steps
+        valid_steps = generator_valid.total_samples // self.batch_size
 
         # start training
         self.model.fit(
@@ -251,8 +250,8 @@ class Model():
             steps_per_epoch=train_steps,
             epochs=self.max_epochs,
             verbose=1,
-            validation_data=dataset_test,
-            validation_steps=test_steps,
+            validation_data=dataset_valid,
+            validation_steps=valid_steps,
             callbacks=[checkpoints, reduce_lr, csv_logger, early_stopping],
             max_queue_size=50,
             workers=12,
