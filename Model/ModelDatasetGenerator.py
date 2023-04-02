@@ -6,7 +6,7 @@ from random import shuffle
 from tensorflow import TensorShape, float32, data
 
 
-class DatasetGenerator():
+class ModelDatasetGenerator():
     """
     Class for creating a Tensorflow dataset based on an iterator from an audio dataset. Single-channel audio files only.
     """
