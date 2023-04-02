@@ -1,7 +1,17 @@
 import math
+import os
+import numpy as np
 import tensorflow as tf
-from keras.optimizers import Adam
 from keras.layers import Lambda, Input, Conv1D, ReLU, BatchNormalization
+from keras.optimizers import Adam
+from keras.callbacks import CSVLogger, EarlyStopping, ReduceLROnPlateau, \
+    ModelCheckpoint
+
+from DatasetGenerator import DatasetGenerator
+
+
+# TODO: remove
+tf.debugging.set_log_device_placement(True)
 
 
 class Model():
@@ -168,3 +178,85 @@ class Model():
             loss=self.loss_wrapper(),
             optimizer=Adam(lr=self.learning_rate)
         )
+
+    def train_model(self, run_name,
+                    path_train_noisy, path_train_clean,
+                    path_test_noisy, path_test_clean):
+        """
+        Method to train the model.
+
+        Args:
+            run_name (str): name of training run
+            path_train_noisy (str): path to train noised audio
+            path_train_clean (str): path to train clean audio
+            path_test_noisy (str): path to test noised audio
+            path_test_clean (str): path to test clean audio
+        """
+
+        # create save path for model if not created
+        savePath = './model_' + run_name + '/'
+        if not os.path.exists(savePath):
+            os.makedirs(savePath)
+
+        # logger
+        csv_logger = CSVLogger(savePath + 'training_' + run_name + '.log')
+
+        # adaptive learning rate
+        reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5,
+                                      patience=3, min_lr=1e-8, cooldown=1)
+
+        # callback for early stopping
+        early_stopping = EarlyStopping(monitor='val_loss', patience=10)
+
+        # save best results
+        checkpoints = ModelCheckpoint(savePath + run_name + '.h5',
+                                      monitor='val_loss',
+                                      verbose=1,
+                                      save_best_only=True,
+                                      save_weights_only=True
+                                      )
+
+        # audio chunks length in samples
+        audio_chunks_len = int(np.fix(
+            self.sr * self.samples_len / self.block_shift
+        ) * self.block_shift)
+
+        # dataset generator for training data
+        generator_train = DatasetGenerator(path_train_noisy,
+                                           path_train_clean,
+                                           audio_chunks_len,
+                                           self.sr, True)
+        dataset = generator_train.tf_dataset
+        dataset = dataset.batch(self.batch_size, drop_remainder=True).repeat()
+
+        # calculate training steps in one epoch
+        train_steps = generator_train.total_samples // self.batch_size
+
+        # dataset generator for testing data
+        generator_test = DatasetGenerator(path_test_noisy,
+                                          path_test_clean,
+                                          audio_chunks_len,
+                                          self.sr)
+        dataset_test = generator_test.tf_dataset
+        dataset_test = dataset_test.batch(
+            self.batch_size, drop_remainder=True).repeat()
+
+        # calculate test steps
+        test_steps = generator_test.total_samples // self.batch_size
+
+        # start training
+        self.model.fit(
+            x=dataset,
+            batch_size=None,
+            steps_per_epoch=train_steps,
+            epochs=self.max_epochs,
+            verbose=1,
+            validation_data=dataset_test,
+            validation_steps=test_steps,
+            callbacks=[checkpoints, reduce_lr, csv_logger, early_stopping],
+            max_queue_size=50,
+            workers=12,
+            use_multiprocessing=True)
+
+        # clear session
+        tf.keras.backend.clear_session()
