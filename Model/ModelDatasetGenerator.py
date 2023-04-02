@@ -14,7 +14,7 @@ class ModelDatasetGenerator():
     def __init__(self, path_target_noisy, path_target_clean,
                  samples_len, sr, train_flag=False):
         """
-        Constructor of the dataset generator class.
+        Constructor of the ModelDatasetGenerator class.
 
         Args:
             path_target_noisy (str): path to the noisy audio
