@@ -1,5 +1,7 @@
 import math
 import tensorflow as tf
+from keras.optimizers import Adam
+from keras.layers import Lambda, Input, Conv1D, ReLU, BatchNormalization
 
 
 class Model():
@@ -14,7 +16,7 @@ class Model():
 
         # initialising internal class members
         # init model
-        self.model = []
+        self.model
         # sample rate
         self.sr = 16000
         # batches of size - batchsize with samples of size - samples_len
@@ -79,12 +81,12 @@ class Model():
         loss = math.log10(snr)
         return loss
 
-    def lossWrapper(self):
+    def loss_wrapper(self):
         """
         Wrapper for loss function.
         """
 
-        def lossFunction(y_true, y_pred):
+        def loss_function(y_true, y_pred):
             # calculate loss, squeeze it: remove all size 1 dimensions and returns a tensor of the same type
             loss = tf.squeeze(self.cost_function(y_pred, y_true))
 
@@ -93,4 +95,76 @@ class Model():
 
             return loss
 
-        return lossFunction
+        return loss_function
+
+    def stft_lambda_layer(self, x):
+        """
+        Method for the calculation of the STFT for the lambda layer of the model. Calculates the STFT from the continuous signal amplitudes and returns complex STFT values.
+
+        Args:
+            x: time signal layer input
+
+        Returns:
+            Tensor: complex STFT values where the unique components of the FFT is fft_length // 2 + 1
+        """
+
+        # calculate STFT from the continuous signal amplitudes with
+        # frame_legth = block_len and frame_step = block_shift
+        stft = tf.signal.stft(x, self.block_len, self.block_shift)
+
+        # return calculated STFT
+        return stft
+
+    def istft_lambda_layer(self, x):
+        """
+        Method for the calculation of the inverse STFT for the model lambda layer. Calculates and returns signals representing the inverse STFT for each input STFT.
+
+        Args:
+            x (Tensor): complex STFT values
+
+        Returns:
+            [..., samples]: Tensor of float signals representing the inverse STFT for each input STFT in stfts.
+        """
+
+        # calculate inverse STFT(istft) from complex STFT values
+        istft = tf.signal.inverse_stft(x, self.block_len, self.block_shift)
+
+        # return calculated iSTFT signals
+        return istft
+
+    def build_model(self):
+        """
+        Method to build model.
+        """
+
+        # input layer for time signal
+        time_signal = Input(shape=(1, self.block_len))
+
+        # building model
+        x = Conv1D(filters=16, kernel_size=9, padding='same')(time_signal)
+        x = BatchNormalization()(x)
+        x = ReLU()(x)
+        x = Lambda(self.stft_lambda_layer)(x)
+        x = Conv1D(filters=16, kernel_size=9, padding='same')(x)
+        x = BatchNormalization()(x)
+        x = ReLU()(x)
+        x = Lambda(self.istft_lambda_layer)(x)
+        outputs = x
+
+        # create model
+        self.model = tf.keras.Model(inputs=time_signal, outputs=outputs)
+
+        # print model summary
+        print(self.model.summary())
+
+    def compile_model(self):
+        """
+        Method to compile the model.
+        """
+
+        # TODO: test mse loss
+        # compile model with snr loss function
+        self.model.compile(
+            loss=self.loss_wrapper(),
+            optimizer=Adam(lr=self.learning_rate)
+        )
