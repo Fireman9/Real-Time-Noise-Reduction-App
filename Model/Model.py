@@ -141,7 +141,7 @@ class Model():
             x (list): magnitude and phase from FFT values
 
         Returns:
-            Treal Tensor: Tensor of Treal signals representing the inverse FFT for each input of FFT.
+            Tensor: Tensor of Treal signals representing the inverse FFT for each input of FFT.
         """
 
         # calculating FFT complex representation
