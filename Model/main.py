@@ -1,5 +1,5 @@
 import os
-from Model.Model import Model
+from Model import Model
 from AudioGenerator import AudioGenerator
 
 # use GPU 0
@@ -24,7 +24,7 @@ def main():
     audio_generator = AudioGenerator(path_clean, path_noise,
                                      path_train_noisy, path_train_clean,
                                      path_valid_noisy, path_valid_clean,
-                                     2, 20, 0.9)
+                                     2, 30, 0.8)
     audio_generator.generate_data()
 
     # training run name
