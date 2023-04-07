@@ -26,13 +26,13 @@ class Model():
         self.sr = 16000
 
         # batches of size - batchsize
-        self.batch_size = 256
+        self.batch_size = 2048
         # activation function
         self.activation = 'sigmoid'
 
         # mag mask kernel
         self.units_count = 128
-        self.layers_count = 1
+        self.layers_count = 2
 
         # one time domain frame size = 32 ms for 16k sr
         self.block_len = 512
