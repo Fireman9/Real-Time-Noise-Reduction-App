@@ -211,7 +211,8 @@ class Model():
                                 strides=1, use_bias=False)(x)
 
         # predicting a features mask with separation kernel
-        mask_2 = self.mask_kernel(self.layers_count, 256, encoded_frames)
+        mask_2 = self.mask_kernel(
+            self.layers_count, self.filter_count, encoded_frames)
         # applying a features mask from separation kernel
         x = Multiply()([encoded_frames, mask_2])
 
