@@ -5,13 +5,20 @@ from pystoi import stoi
 import matplotlib.pyplot as plt
 
 
+# Sample rate
+sr = 48000
+
 # Load the audio files
-audio_clean, sr = librosa.load("", sr=None)
-audio_noisy, sr = librosa.load("", sr=None)
+audio_clean = librosa.load("", sr=sr)
+audio_noisy = librosa.load("", sr=sr)
+
+# resampling to 16k because pesq support only 8k or 16k audio
+audio_clean = librosa.resample(audio_clean, orig_sr=sr, target_sr=16000)
+audio_noisy = librosa.resample(audio_noisy, orig_sr=sr, target_sr=16000)
 
 # Calculate the metrics
-pesq_score = pesq(sr, audio_clean, audio_noisy, "wb")
-stoi_score = stoi(audio_noisy, audio_clean, sr)
+pesq_score = pesq(16000, audio_clean, audio_noisy, "wb")
+stoi_score = stoi(audio_noisy, audio_clean, 16000)
 
 # Print the results
 print("STOI: {:.2f}".format(stoi_score))
