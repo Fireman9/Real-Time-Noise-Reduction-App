@@ -5,6 +5,7 @@ import multiprocessing
 import math
 import soundfile as sf
 import numpy as np
+# import noisereduce as nr
 
 
 class AudioGenerator:
@@ -49,25 +50,6 @@ class AudioGenerator:
 
         self.train_proportion = train_proportion
         self.num_parts = num_purts
-
-    def normalize_audio(self, audio):
-        """
-        Method to normalize audio file.
-
-        Args:
-            audio (array): Audio data.
-
-        Returns:
-            array: Normalized audio data.
-        """
-
-        # Calculate the maximum absolute value of the audio samples
-        max_audio = np.max(np.abs(audio))
-
-        # Normalize the audio
-        audio = audio / max_audio
-
-        return audio
 
     def add_noise(self, clean_audio, noise_audio):
         """
@@ -191,16 +173,16 @@ class AudioGenerator:
         # loop through each clean file and add noise
         for clean_file in clean_files:
             # load the clean audio file
-            clean_audio = librosa.load(os.path.join(
+            clean_audio, sr = librosa.load(os.path.join(
                 self.path_clean, clean_file), sr=self.sr)
 
             # Normalize the audio
-            clean_audio = self.normalize_audio(clean_audio)
+            clean_audio = librosa.util.normalize()
 
             # loop through each noise file in the noise directory
             for noise_file in os.listdir(self.path_noise):
                 # load the noise audio file
-                noise_audio = librosa.load(os.path.join(
+                noise_audio, sr = librosa.load(os.path.join(
                     self.path_noise, noise_file), sr=self.sr)
 
                 # overlay the clean audio with the adjusted noise
@@ -231,17 +213,17 @@ class AudioGenerator:
         # loop through each clean file and add noise
         for clean_file in clean_files:
             # load the clean audio file
-            clean_audio = librosa.load(os.path.join(
+            clean_audio, sr = librosa.load(os.path.join(
                 self.path_clean, clean_file), sr=self.sr)
 
             # Normalize the audio
-            clean_audio = self.normalize_audio(clean_audio)
+            clean_audio = librosa.util.normalize(clean_audio)
 
             # select random noise
             noise_file = random.choice(noise_files)
 
             # load the noise audio file
-            noise_audio = librosa.load(os.path.join(
+            noise_audio, sr = librosa.load(os.path.join(
                 self.path_noise, noise_file), sr=self.sr)
 
             # overlay the clean audio with the adjusted noise
