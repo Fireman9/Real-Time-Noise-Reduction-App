@@ -12,4 +12,6 @@ Logo::Logo(QString filepath, QWidget* parent) : QWidget(parent)
     // make resizable
     layout->addWidget(mLogoLabel);
     mLogoLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    mLogoLabel->setMinimumSize({60, 40});
+    mLogoLabel->setMaximumSize({200, 150});
 }

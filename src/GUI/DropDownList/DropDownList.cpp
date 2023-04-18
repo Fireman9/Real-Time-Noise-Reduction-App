@@ -14,7 +14,7 @@ void DropDownList::setupStyle()
         QComboBox {
             border: 1px solid #ccc;
             border-radius: 4px;
-            padding: 2px 20px 2px 8px;
+            padding: 2px 2px 2px 8px;
             min-width: 6em;
             font-size: 18px;
             color: #555;
