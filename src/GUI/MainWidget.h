@@ -68,6 +68,9 @@ class MainWidget : public QWidget
     /// @brief Slot function for retrieving microphone device system index after
     /// dropdown list of available microphones item change
     void getMicDeviceIndex();
+    /// @brief Slot function to start noise reduction on the selected
+    /// microphone after toggle button check.
+    void reduceNoise();
 };
 
 #endif // MAIN_WIDGET_H

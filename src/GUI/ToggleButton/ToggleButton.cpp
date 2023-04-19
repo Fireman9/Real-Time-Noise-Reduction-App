@@ -57,5 +57,5 @@ bool ToggleButton::hitButton(const QPoint& pos) const
 
 void ToggleButton::debug()
 {
-    printf("Status: %d \n", isChecked());
+    printf("Toggle button status: %d \n", isChecked());
 }

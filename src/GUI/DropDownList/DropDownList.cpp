@@ -40,5 +40,5 @@ void DropDownList::setupStyle()
 
 void DropDownList::debug()
 {
-    printf("Item index selected: %u \n", currentIndex());
+    printf("Dropdown list item index selected: %u \n", currentIndex());
 }

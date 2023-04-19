@@ -30,6 +30,10 @@ MainWidget::MainWidget(QWidget* parent) : QWidget(parent)
     // on drop down list item change - get microphone device system index
     connect(mMicDropDownList, &QComboBox::currentTextChanged, this,
             &MainWidget::getMicDeviceIndex);
+
+    // on toggle button state change - start noise reduction
+    connect(mMicNoiseToggleButton, &QCheckBox::stateChanged, this,
+            &MainWidget::reduceNoise);
 }
 
 void MainWidget::addAllMicToList()
@@ -37,17 +41,6 @@ void MainWidget::addAllMicToList()
     mMicDropDownList->addItem("--Nothing selected--");
     for (std::string device : mAudioStream.getAllInputDevices()) {
         mMicDropDownList->addItem(QString::fromStdString(device));
-    }
-}
-
-void MainWidget::getMicDeviceIndex()
-{
-    if (mMicDropDownList->currentIndex() != 0) {
-        mCurMicIndex = mAudioStream.get_device_id_by_name(
-            mMicDropDownList->currentText().toStdString());
-        printf("Current mic index: %d\n", mCurMicIndex);
-    } else {
-        printf("Current mic: nothing selected\n");
     }
 }
 
@@ -88,4 +81,28 @@ void MainWidget::adjustWindowSettings()
     this->adjustSize();
     // set fixed size window
     this->setFixedSize(this->width(), this->height());
+}
+
+void MainWidget::getMicDeviceIndex()
+{
+    if (mMicDropDownList->currentIndex() != 0) {
+        mCurMicIndex = mAudioStream.get_device_id_by_name(
+            mMicDropDownList->currentText().toStdString());
+        printf("Current mic index: %d\n", mCurMicIndex);
+    } else {
+        printf("Current mic: nothing selected\n");
+    }
+}
+
+void MainWidget::reduceNoise()
+{
+    // if the toggle button that enables/disables noise cancellation is checked
+    if (mMicNoiseToggleButton->isChecked()) {
+        // open stream to selected microphone
+        // TODO audio driver setting
+        mAudioStream.open_stream(5);
+        // mAudioStream.open_stream(mCurMicIndex);
+    } else {
+        mAudioStream.close_stream();
+    }
 }
