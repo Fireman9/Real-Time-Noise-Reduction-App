@@ -8,6 +8,7 @@
 
 #include "../AudioStream.h"
 #include "DropDownList/DropDownList.h"
+#include "Icon/Icon.h"
 #include "Logo/Logo.h"
 #include "TextLabel/TextLabel.h"
 #include "ToggleButton/ToggleButton.h"
@@ -30,6 +31,8 @@ class MainWidget : public QWidget
 
     /// @brief The logo displayed in the widget.
     Logo* logo;
+    /// @brief The microphone icon.
+    Icon* mMicIcon;
     /// @brief The drop-down list that contains the available microphones.
     DropDownList* mMicDropDownList;
     /// @brief The toggle button that enables/disables noise cancellation.
@@ -40,8 +43,11 @@ class MainWidget : public QWidget
     /// @brief The horizontal layout that contains the logo and the application
     /// name.
     QHBoxLayout* mLogoNameLayout;
-    /// @brief The vertical layout that contains the "Microphone:" label and the
-    /// drop-down list.
+    /// @brief The horizontal layout that contains the mic icon and the
+    /// "Microphone:" label
+    QHBoxLayout* mMicLayout;
+    /// @brief The vertical layout that contains mic icon, "Microphone:" label
+    /// and the drop-down list.
     QVBoxLayout* mMicDropDownLayout;
     /// @brief The horizontal layout that contains the "Noise Cancellation"
     /// label and the toggle button.

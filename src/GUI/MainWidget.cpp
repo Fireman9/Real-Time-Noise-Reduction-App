@@ -13,6 +13,7 @@ MainWidget::MainWidget(QWidget* parent) : QWidget(parent)
     mMicDropDownList = new DropDownList(this);
     mMicNoiseToggleButton = new ToggleButton(this);
     logo = new Logo("C:/Users/Admin/Desktop/logo.png", this);
+    mMicIcon = new Icon("C:/Users/Admin/Desktop/mic.png", QSize(20, 20), this);
 
     mLayout = new QVBoxLayout(this);
 
@@ -50,8 +51,12 @@ void MainWidget::construct()
     mLogoNameLayout->addWidget(logo);
     mLogoNameLayout->addWidget(mAppNameText);
 
+    mMicLayout = new QHBoxLayout();
+    mMicLayout->addWidget(mMicIcon);
+    mMicLayout->addWidget(mSelectMicText);
+
     mMicDropDownLayout = new QVBoxLayout();
-    mMicDropDownLayout->addWidget(mSelectMicText);
+    mMicDropDownLayout->addLayout(mMicLayout);
     mMicDropDownLayout->addWidget(mMicDropDownList);
 
     mMicNoiseToggleLayout = new QHBoxLayout();
