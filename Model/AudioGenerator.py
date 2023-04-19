@@ -174,16 +174,14 @@ class AudioGenerator:
         for clean_file in clean_files:
             # load the clean audio file
             clean_audio, sr = librosa.load(os.path.join(
-                self.path_clean, clean_file), sr=self.sr)
-
-            # Normalize the audio
-            clean_audio = librosa.util.normalize()
+                self.path_clean, clean_file), sr=self.sr, res_type="polyphase")
 
             # loop through each noise file in the noise directory
             for noise_file in os.listdir(self.path_noise):
                 # load the noise audio file
-                noise_audio, sr = librosa.load(os.path.join(
-                    self.path_noise, noise_file), sr=self.sr)
+                noise_audio, sr = librosa.load(
+                    os.path.join(self.path_noise, noise_file),
+                    sr=self.sr, res_type="polyphase")
 
                 # overlay the clean audio with the adjusted noise
                 noisy_audio = self.add_noise(clean_audio, noise_audio)
@@ -214,17 +212,14 @@ class AudioGenerator:
         for clean_file in clean_files:
             # load the clean audio file
             clean_audio, sr = librosa.load(os.path.join(
-                self.path_clean, clean_file), sr=self.sr)
-
-            # Normalize the audio
-            clean_audio = librosa.util.normalize(clean_audio)
+                self.path_clean, clean_file), sr=self.sr, res_type="polyphase")
 
             # select random noise
             noise_file = random.choice(noise_files)
 
             # load the noise audio file
             noise_audio, sr = librosa.load(os.path.join(
-                self.path_noise, noise_file), sr=self.sr)
+                self.path_noise, noise_file), sr=self.sr, res_type="polyphase")
 
             # overlay the clean audio with the adjusted noise
             noisy_audio = self.add_noise(clean_audio, noise_audio)
