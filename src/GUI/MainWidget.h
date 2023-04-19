@@ -6,6 +6,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include "../AudioStream.h"
 #include "DropDownList/DropDownList.h"
 #include "Logo/Logo.h"
 #include "TextLabel/TextLabel.h"
@@ -46,6 +47,11 @@ class MainWidget : public QWidget
     /// label and the toggle button.
     QHBoxLayout* mMicNoiseToggleLayout;
 
+    /// @brief Audio stream manager class.
+    AudioStream mAudioStream;
+    /// @brief Current microphone index selected for noise reduction
+    int mCurMicIndex;
+
     /// @brief Adds all available microphones to the drop-down list.
     void addAllMicToList();
     /// @brief Constructs the widgets and layouts.
@@ -57,6 +63,11 @@ class MainWidget : public QWidget
     /// @brief Constructs a new MainWidget object.
     /// @param parent The parent widget.
     MainWidget(QWidget* parent = nullptr);
+
+  public slots:
+    /// @brief Slot function for retrieving microphone device system index after
+    /// dropdown list of available microphones item change
+    void getMicDeviceIndex();
 };
 
 #endif // MAIN_WIDGET_H

@@ -16,6 +16,8 @@ MainWidget::MainWidget(QWidget* parent) : QWidget(parent)
 
     mLayout = new QVBoxLayout(this);
 
+    mCurMicIndex = 0;
+
     // add all available microphones to list
     addAllMicToList();
 
@@ -24,15 +26,29 @@ MainWidget::MainWidget(QWidget* parent) : QWidget(parent)
 
     // set window settings
     adjustWindowSettings();
+
+    // on drop down list item change - get microphone device system index
+    connect(mMicDropDownList, &QComboBox::currentTextChanged, this,
+            &MainWidget::getMicDeviceIndex);
 }
 
 void MainWidget::addAllMicToList()
 {
-    mMicDropDownList->addItem("Test1");
-    mMicDropDownList->addItem("Test2");
-    mMicDropDownList->addItem("Test3");
-    mMicDropDownList->addItem("Test4");
-    mMicDropDownList->addItem("Test5");
+    mMicDropDownList->addItem("--Nothing selected--");
+    for (std::string device : mAudioStream.getAllInputDevices()) {
+        mMicDropDownList->addItem(QString::fromStdString(device));
+    }
+}
+
+void MainWidget::getMicDeviceIndex()
+{
+    if (mMicDropDownList->currentIndex() != 0) {
+        mCurMicIndex = mAudioStream.get_device_id_by_name(
+            mMicDropDownList->currentText().toStdString());
+        printf("Current mic index: %d\n", mCurMicIndex);
+    } else {
+        printf("Current mic: nothing selected\n");
+    }
 }
 
 void MainWidget::construct()
@@ -63,8 +79,11 @@ void MainWidget::adjustWindowSettings()
     // remove maximize button
     setWindowFlags(windowFlags() & ~Qt::WindowMaximizeButtonHint);
 
+    // set sizes
+    mMicDropDownList->setMaximumWidth(320);
     this->setMinimumWidth(320);
     this->setMinimumHeight(180);
+
     // set to minimum possible size
     this->adjustSize();
     // set fixed size window
