@@ -12,8 +12,8 @@ MainWidget::MainWidget(QWidget* parent) : QWidget(parent)
 
     mMicDropDownList = new DropDownList(this);
     mMicNoiseToggleButton = new ToggleButton(this);
-    logo = new Logo("C:/Users/Admin/Desktop/logo.png", this);
-    mMicIcon = new Icon("C:/Users/Admin/Desktop/mic.png", QSize(20, 20), this);
+    logo = new Logo("./images/logo.png", this);
+    mMicIcon = new Icon("./images/mic.png", QSize(20, 20), this);
 
     mLayout = new QVBoxLayout(this);
 
