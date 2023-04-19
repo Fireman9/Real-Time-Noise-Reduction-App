@@ -23,28 +23,28 @@ class Model():
         # init model
         self.model = []
         # sample rate
-        self.sr = 16000
+        self.sr = 48000
 
         # batches of size - batchsize
-        self.batch_size = 2048
+        self.batch_size = 16384
         # activation function
         self.activation = 'sigmoid'
 
         # mag mask kernel
-        self.units_count = 128
+        self.units_count = 384
         self.layers_count = 2
 
-        # one time domain frame size = 32 ms for 16k sr
-        self.block_len = 512
-        # shift for block_len = 8 ms for 16k sr
-        self.block_shift = 128
+        # one time domain frame size = 32 ms for 48k sr
+        self.block_len = 1536
+        # shift for block_len = 8 ms for 48k sr
+        self.block_shift = 384
 
         self.dropout = 0.25
         self.learning_rate = 1e-3
         self.max_epochs = 200
 
         # filters count for finding features
-        self.filter_count = 256
+        self.filter_count = 768
 
         # epsilon
         self.eps = 1e-7
@@ -59,7 +59,7 @@ class Model():
                 tf.config.experimental.set_memory_growth(device, enable=True)
 
     @staticmethod
-    def snr_cost(pred_val, true_val):
+    def snr_cost(pred_val, true_val, epsilon=1e-10):
         """
         Static signal-to-noise ratio cost function method. The loss is 
         always calculated over the last dimension. 
@@ -82,14 +82,14 @@ class Model():
                 tf.pow(true_val - pred_val, 2),
                 axis=-1,
                 keepdims=True
-            ) + 1e-7
+            ) + epsilon
         )
 
         # log10(snr) = log(snr) / log(10)
-        num = tf.math.log(snr)
+        num = tf.math.log(snr + epsilon)
         denom = tf.math.log(tf.constant(10, dtype=num.dtype))
         # calculating loss
-        loss = -10*(num / (denom))
+        loss = -10 * (num / (denom))
 
         return loss
 
@@ -281,7 +281,8 @@ class Model():
                                       patience=3, min_lr=1e-8, cooldown=1)
 
         # callback for early stopping
-        early_stopping = EarlyStopping(monitor='val_loss', patience=10)
+        early_stopping = EarlyStopping(
+            monitor='val_loss', min_delta=0.01, patience=10)
 
         # save best results
         checkpoints = ModelCheckpoint(save_path + run_name + ".h5",
