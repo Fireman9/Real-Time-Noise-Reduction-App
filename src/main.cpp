@@ -1,5 +1,8 @@
+#include <QApplication>
+
 #include "AudioFile/AudioFile.h"
 #include "AudioStream.h"
+#include "GUI/MainWidget.h"
 
 void stream()
 {
@@ -38,9 +41,12 @@ void audio_file_test()
     // audio_file.noise_gate(-60);
 }
 
-int main()
+int main(int argc, char* argv[])
 {
-    // stream();
-    audio_file_test();
-    return 0;
+    QApplication a(argc, argv);
+
+    MainWidget widget;
+    widget.show();
+
+    return QApplication::exec();
 }
