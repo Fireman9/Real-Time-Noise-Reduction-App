@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include "portaudio.h"
 
@@ -33,6 +34,10 @@ class AudioStream
     void debug_print_all_devices();
     void debug_print_all_input_devices();
     void debug_print_all_output_devices();
+
+    /// @brief Function to retrieve all input devices available in the system.
+    /// @return Vector with the names of the input devices.
+    std::vector<std::string> getAllInputDevices();
 };
 
 #endif // SANDBOXCLION_AUDIOSTREAM_H

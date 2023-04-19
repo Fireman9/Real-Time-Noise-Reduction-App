@@ -45,7 +45,7 @@ void AudioStream::open_stream(int output_device_id)
     output_params.hostApiSpecificStreamInfo = nullptr;
 
     PaError err =
-        Pa_OpenStream(&m_stream, &input_params, &output_params, 48000, 64, 0,
+        Pa_OpenStream(&m_stream, &input_params, &output_params, 48000, 1536, 0,
                       process_callback, nullptr); // move to constants
     if (err != paNoError) {
         throw AudioStreamException(err);
@@ -229,4 +229,25 @@ void AudioStream::debug_print_all_output_devices()
             std::cout << i << ": " << deviceInfo->name << std::endl;
         }
     }
+}
+
+std::vector<std::string> AudioStream::getAllInputDevices()
+{
+    std::vector<std::string> devices;
+    // get all devices count
+    int deviceCount = Pa_GetDeviceCount();
+    if (deviceCount < 0) {
+        throw AudioStreamException(deviceCount);
+    }
+    // through all devices
+    for (int i = 0; i < deviceCount; i++) {
+        const PaDeviceInfo* deviceInfo = Pa_GetDeviceInfo(i);
+        // if device info is available and it is an input device
+        if (deviceInfo != nullptr && deviceInfo->maxInputChannels > 0) {
+            // add device info name to vector
+            devices.push_back(deviceInfo->name);
+        }
+    }
+
+    return devices;
 }
