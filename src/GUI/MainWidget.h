@@ -1,8 +1,13 @@
 #ifndef MAIN_WIDGET_H
 #define MAIN_WIDGET_H
 
+#include <QAction>
+#include <QApplication>
+#include <QEvent>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QMenu>
+#include <QSystemTrayIcon>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -58,12 +63,26 @@ class MainWidget : public QWidget
     /// @brief Current microphone index selected for noise reduction
     int mCurMicIndex;
 
+    /// @brief System tray icon class for minimizing to tray.
+    QSystemTrayIcon* mTrayIcon;
+    /// @brief Menu for system tray.
+    QMenu* mTrayIconMenu;
+    /// @brief Exit action for system tray menu.
+    QAction* mExitAction;
+
     /// @brief Adds all available microphones to the drop-down list.
     void addAllMicToList();
     /// @brief Constructs the widgets and layouts.
     void construct();
     /// @brief Adjusts the window settings.
     void adjustWindowSettings();
+    /// @brief Initialize system tray and its menu.
+    void initSystemTray();
+    /// @brief Connect all signals and slots here.
+    void connectAll();
+
+  protected:
+    virtual bool event(QEvent* e) override;
 
   public:
     /// @brief Constructs a new MainWidget object.
@@ -77,6 +96,11 @@ class MainWidget : public QWidget
     /// @brief Slot function to start noise reduction on the selected
     /// microphone after toggle button check.
     void reduceNoise();
+    /// @brief Slot function to restore window on tray icon click.
+    /// @param reason Specifies the reason for activation.
+    void trayIconActivated(QSystemTrayIcon::ActivationReason reason);
+    /// @brief Slot function to exit app on tray menu exit option click.
+    void onExitAction();
 };
 
 #endif // MAIN_WIDGET_H

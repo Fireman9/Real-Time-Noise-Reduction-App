@@ -19,6 +19,9 @@ MainWidget::MainWidget(QWidget* parent) : QWidget(parent)
 
     mCurMicIndex = 0;
 
+    // Initialize system tray and its menu
+    initSystemTray();
+
     // add all available microphones to list
     addAllMicToList();
 
@@ -28,13 +31,8 @@ MainWidget::MainWidget(QWidget* parent) : QWidget(parent)
     // set window settings
     adjustWindowSettings();
 
-    // on drop down list item change - get microphone device system index
-    connect(mMicDropDownList, &QComboBox::currentTextChanged, this,
-            &MainWidget::getMicDeviceIndex);
-
-    // on toggle button state change - start noise reduction
-    connect(mMicNoiseToggleButton, &QCheckBox::stateChanged, this,
-            &MainWidget::reduceNoise);
+    // connect all signals and slots
+    connectAll();
 }
 
 void MainWidget::addAllMicToList()
@@ -88,6 +86,42 @@ void MainWidget::adjustWindowSettings()
     this->setFixedSize(this->width(), this->height());
 }
 
+void MainWidget::initSystemTray()
+{
+    mTrayIcon = new QSystemTrayIcon(this);
+
+    mTrayIconMenu = new QMenu(this);
+
+    // actions
+    mExitAction = new QAction("Exit", this);
+
+    // add actions to menu
+    mTrayIconMenu->addAction(mExitAction);
+
+    // set system tray icon
+    mTrayIcon->setIcon(QIcon("./images/logo.png"));
+    // set menu to tray
+    mTrayIcon->setContextMenu(mTrayIconMenu);
+}
+
+void MainWidget::connectAll()
+{
+    // on drop down list item change - get microphone device system index
+    connect(mMicDropDownList, &QComboBox::currentTextChanged, this,
+            &MainWidget::getMicDeviceIndex);
+
+    // on toggle button state change - start noise reduction
+    connect(mMicNoiseToggleButton, &QCheckBox::stateChanged, this,
+            &MainWidget::reduceNoise);
+
+    // process tray icon activation
+    connect(mTrayIcon, &QSystemTrayIcon::activated, this,
+            &MainWidget::trayIconActivated);
+
+    // on system tray menu exit option click - close app
+    connect(mExitAction, &QAction::triggered, this, &MainWidget::onExitAction);
+}
+
 void MainWidget::getMicDeviceIndex()
 {
     if (mMicDropDownList->currentIndex() != 0) {
@@ -110,4 +144,40 @@ void MainWidget::reduceNoise()
     } else {
         mAudioStream.close_stream();
     }
+}
+
+bool MainWidget::event(QEvent* e)
+{
+    if (e->type() == QEvent::WindowStateChange) {
+        if (isMinimized()) {
+            // hide main widget
+            this->hide();
+            // show tray icon
+            mTrayIcon->show();
+            e->ignore();
+        } else {
+            e->accept();
+        }
+    }
+    return QWidget::event(e);
+}
+
+void MainWidget::trayIconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+    // if tray icon was triggered
+    if (reason == QSystemTrayIcon::Trigger) {
+        // show main widget
+        this->show();
+        // bring window to foreground
+        this->setWindowState(Qt::WindowState::WindowActive);
+    }
+    // if tray icon menu was triggered(right mouse click)
+    else if (reason == QSystemTrayIcon::Context) {
+        mTrayIconMenu->exec(QCursor::pos());
+    }
+}
+
+void MainWidget::onExitAction()
+{
+    QApplication::quit();
 }
