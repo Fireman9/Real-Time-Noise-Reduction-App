@@ -28,7 +28,7 @@ class Model():
         # batches of size - batchsize
         self.batch_size = 16384
         # activation function
-        self.activation = 'sigmoid'
+        self.activation = "selu"
 
         # mag mask kernel
         self.units_count = 384

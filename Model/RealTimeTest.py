@@ -3,10 +3,10 @@ import numpy as np
 import tensorflow as tf
 
 
-# one time domain frame size = 32 ms for 16k sr
-block_len = 512
-# shift for block_len = 8 ms for 16k sr
-block_shift = 128
+# one time domain frame size = 32 ms for 48k sr
+block_len = 1536
+# shift for block_len = 8 ms for 48k sr
+block_shift = 384
 
 # load model
 model = tf.saved_model.load("")
@@ -17,8 +17,8 @@ infer = model.signatures["serving_default"]
 audio, sr = sf.read("")
 
 # check sampling rate
-if sr != 16000:
-    raise ValueError("Model supports only 16000 sampling rate.")
+if sr != 48000:
+    raise ValueError("Sampling rates don't match the specifications.")
 
 # output audio init
 out_file = np.zeros((len(audio)))
@@ -47,7 +47,7 @@ for i in range(num_blocks):
     output_buffer[:-block_shift] = output_buffer[block_shift:]
     output_buffer[-block_shift:] = np.zeros((block_shift))
     output_buffer += np.squeeze(out_block)
-    
+
     # devide signal values by 2
     output_buffer[:] = [x / 2 for x in output_buffer]
 
