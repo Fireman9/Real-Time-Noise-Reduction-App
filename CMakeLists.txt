@@ -8,10 +8,19 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_TOOLCHAIN_FILE "C:/vcpkg/scripts/buildsystems/vcpkg.cmake")
 set(CMAKE_PREFIX_PATH "C:/Qt/6.4.3/mingw_64/lib/cmake")
 
+# import vcpkg
 include_directories("C:/vcpkg/installed/x64-windows/include")
 link_directories("C:/vcpkg/installed/x64-windows/lib")
 
+# import tensorflow-c-api
+include_directories("C:/Users/Admin/Documents/Projects/tensorflow-c-api/include")
+link_directories("C:/Users/Admin/Documents/Projects/tensorflow-c-api/lib")
+
+# import cppflow
+include_directories("C:/Program Files (x86)/cppflow/include")
+
 find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
+find_package(cppflow REQUIRED)
 
 set(HEADERS src/AudioStream.h src/AudioStreamException.h
     src/AudioFile/AudioFile.h src/Filters/Kalman.h
@@ -30,6 +39,8 @@ add_executable(Sandbox ${HEADERS} ${SOURCES})
 
 target_link_libraries(Sandbox portAudio)
 target_link_libraries(Sandbox sndfile)
+target_link_libraries(Sandbox tensorflow)
+target_link_libraries(Sandbox cppflow::cppflow)
 target_link_libraries(Sandbox Qt::Core Qt::Gui Qt::Widgets)
 
 if(WIN32)
