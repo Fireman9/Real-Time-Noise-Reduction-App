@@ -22,15 +22,17 @@ include_directories("C:/Program Files (x86)/cppflow/include")
 find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 find_package(cppflow REQUIRED)
 
-set(HEADERS src/AudioStream.h src/AudioStreamException.h
+set(HEADERS src/Stream/AudioStream.h src/Stream/AudioStreamException.h
     src/AudioFile/AudioFile.h src/Filters/Kalman.h
     src/Filters/AdaptiveKalman.h src/Filters/NoiseGate.h
+    src/Util/Timer.h
     src/GUI/MainWidget.h src/GUI/Logo/Logo.h
     src/GUI/DropDownList/DropDownList.h src/GUI/ToggleButton/ToggleButton.h
     src/GUI/TextLabel/TextLabel.h src/GUI/Icon/Icon.h)
 
-set(SOURCES src/main.cpp src/AudioStream.cpp
-    src/AudioStreamException.cpp src/AudioFile/AudioFile.cpp
+set(SOURCES src/main.cpp src/Stream/AudioStream.cpp
+    src/Stream/AudioStreamException.cpp src/AudioFile/AudioFile.cpp
+    src/Util/Timer.cpp
     src/GUI/MainWidget.cpp src/GUI/Logo/Logo.cpp
     src/GUI/DropDownList/DropDownList.cpp src/GUI/ToggleButton/ToggleButton.cpp
     src/GUI/TextLabel/TextLabel.cpp src/GUI/Icon/Icon.cpp)

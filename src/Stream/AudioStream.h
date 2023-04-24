@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "portaudio.h"
+#include <portaudio.h>
 
 #include "AudioStreamException.h"
 
