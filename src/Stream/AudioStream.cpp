@@ -1,11 +1,17 @@
 #include "AudioStream.h"
 
-AudioStream::AudioStream() : m_stream(nullptr)
+AudioStream::AudioStream(std::string modelFilepath) : m_stream(nullptr)
 {
     PaError err = Pa_Initialize();
     if (err != paNoError) {
         throw AudioStreamException(err);
     }
+
+    mSR = 48000;
+    // 1536 = 32 ms for 48k sr
+    mBlockLen = 1536;
+
+    mModel = std::make_unique<cppflow::model>(modelFilepath);
 }
 
 AudioStream::~AudioStream()
@@ -44,9 +50,8 @@ void AudioStream::open_stream(int output_device_id)
         Pa_GetDeviceInfo(output_params.device)->defaultLowOutputLatency;
     output_params.hostApiSpecificStreamInfo = nullptr;
 
-    PaError err =
-        Pa_OpenStream(&m_stream, &input_params, &output_params, 48000, 1536, 0,
-                      process_callback, nullptr); // move to constants
+    PaError err = Pa_OpenStream(&m_stream, &input_params, &output_params, mSR,
+                                mBlockLen, 0, process_callback, this);
     if (err != paNoError) {
         throw AudioStreamException(err);
     }
@@ -87,9 +92,8 @@ void AudioStream::open_stream(int input_device_id, int output_device_id)
         Pa_GetDeviceInfo(output_params.device)->defaultLowOutputLatency;
     output_params.hostApiSpecificStreamInfo = nullptr;
 
-    PaError err =
-        Pa_OpenStream(&m_stream, &input_params, &output_params, 48000, 64, 0,
-                      process_callback, nullptr); // 48000, 256 to constants
+    PaError err = Pa_OpenStream(&m_stream, &input_params, &output_params, mSR,
+                                mBlockLen, 0, process_callback, &mModel);
     if (err != paNoError) {
         throw AudioStreamException(err);
     }
@@ -107,36 +111,41 @@ int AudioStream::process_callback(const void* inputBuffer, void* outputBuffer,
                                   PaStreamCallbackFlags statusFlags,
                                   void* userData)
 {
-    //    const float *inBase = (float *) inputBuffer;
-    //    std::vector<float> vectorBuffer(inBase, inBase+framesPerBuffer);
-
-    const float* in = (const float*)inputBuffer;
+    // init and cast inputBuffet void* to float*
+    const float* in = (float*)inputBuffer;
+    // init and cast outputBuffet void* to float*
     float* out = (float*)outputBuffer;
+    // getting(casting) this class from userData
+    auto stream = static_cast<AudioStream*>(userData);
 
-    //    // TODO: size true?
-    //    std::vector<float> outTest(framesPerBuffer*2, 0);
-    //    for(int i = 0; i < framesPerBuffer*2; i++) {
-    //        outTest[i] = *in++;
-    //    }
+    // create vector from input values
+    std::vector<float> inputBufferVector(in, in + framesPerBuffer);
+    // create tensor from input values
+    cppflow::tensor inputTensor(inputBufferVector, {framesPerBuffer});
+    // expand dimension to match model input
+    inputTensor = cppflow::expand_dims(inputTensor, 0);
 
-    unsigned int i;
-    //    (void) timeInfo;
-    //    (void) statusFlags; /* Prevent unused variable warnings. */
-    //    (void) userData;
+    // predict results using model
+    cppflow::tensor outputTensor = stream->mModel->operator()(
+        {{"serving_default_main_input:0", inputTensor}},
+        {"StatefulPartitionedCall:0"}
+    )[0];
+
+    // define the axes along which to remove dimensions of size 1
+    std::vector<long long int> axes = {0, 1};
+    // squeeze to get only output values
+    outputTensor = cppflow::squeeze(outputTensor, axes);
+    // get output results vector from tensor
+    std::vector<float> outputBufferVector = outputTensor.get_data<float>();
 
     if (inputBuffer == NULL) {
-        for (i = 0; i < framesPerBuffer; i++) {
-            *out++ = 0; /* left - silent */
-                        //            *out++ = 0;  /* right - silent */
+        for (int i = 0; i < framesPerBuffer; i++) {
+            *out++ = 0;
         }
     } else {
-        //        for (i = 0; i < framesPerBuffer; i++) {
-        ////            *out++ = FUZZ(*in++);  /* left - distorted */
-        ////            *out++ = FUZZ(*in++);  /* right - distorted */
-        //            *out++ = *in++;          /*  clean */
-        //        }
-        for (i = 0; i < framesPerBuffer; i++) {
-            *out++ = *in++;
+        for (int i = 0; i < framesPerBuffer; i++) {
+            // write all values to output
+            *out++ = outputBufferVector[i];
         }
     }
 

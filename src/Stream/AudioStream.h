@@ -3,9 +3,11 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
+#include <cppflow/cppflow.h>
 #include <portaudio.h>
 
 #include "AudioStreamException.h"
@@ -15,6 +17,14 @@ class AudioStream
   private:
     PaStream* m_stream;
 
+    /// @brief Sample rate.
+    int mSR;
+    /// @brief One time domain frame size.
+    int mBlockLen;
+
+    /// @brief Trained noise reduction model smart pointer.
+    std::unique_ptr<cppflow::model> mModel;
+
     static int process_callback(const void* inputBuffer, void* outputBuffer,
                                 unsigned long framesPerBuffer,
                                 const PaStreamCallbackTimeInfo* timeInfo,
@@ -22,7 +32,7 @@ class AudioStream
                                 void* userData);
 
   public:
-    AudioStream();
+    AudioStream(std::string modelFilepath = "./model");
     ~AudioStream();
 
     void open_stream(int output_device_id);
