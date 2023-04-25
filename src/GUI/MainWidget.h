@@ -11,7 +11,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-#include "../AudioStream.h"
+#include "../Stream/AudioStream.h"
 #include "DropDownList/DropDownList.h"
 #include "Icon/Icon.h"
 #include "Logo/Logo.h"
