@@ -31,6 +31,12 @@ GateSlider::GateSlider(QWidget* parent) : QWidget(parent)
     mSpinBox->setButtonSymbols(QAbstractSpinBox::NoButtons);
 
     construct();
+
+    // Connect the slider and text input field
+    connect(mSlider, &QSlider::valueChanged, this,
+            &GateSlider::onSliderValueChanged);
+    connect(mSpinBox, &QSpinBox::valueChanged, this,
+            &GateSlider::onSpinBoxChanged);
 }
 
 void GateSlider::construct()
@@ -59,4 +65,14 @@ void GateSlider::construct()
     mLayout->setAlignment(Qt::AlignCenter);
 
     setLayout(mLayout);
+}
+
+void GateSlider::onSliderValueChanged(int value)
+{
+    mSpinBox->setValue(value);
+}
+
+void GateSlider::onSpinBoxChanged(int value)
+{
+    mSlider->setValue(value);
 }

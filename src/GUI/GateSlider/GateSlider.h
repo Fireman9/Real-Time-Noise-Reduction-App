@@ -41,6 +41,14 @@ class GateSlider : public QWidget
     /// @brief Constructor of the GateSlider class. Defines the parent widget.
     /// @param parent The parent widget parameter.
     GateSlider(QWidget* parent = nullptr);
+
+  private slots:
+    /// @brief Private slot for connecting spin box value to slider.
+    /// @param value Selected by slider value.
+    void onSliderValueChanged(int value);
+    /// @brief Private slot for connecting slider value to spin box.
+    /// @param value Selected by spin box value.
+    void onSpinBoxChanged(int value);
 };
 
 #endif // GATE_SLIDER_H
