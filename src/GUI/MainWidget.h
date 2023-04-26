@@ -13,6 +13,7 @@
 
 #include "../Stream/AudioStream.h"
 #include "DropDownList/DropDownList.h"
+#include "GateSlider/GateSlider.h"
 #include "Icon/Icon.h"
 #include "Logo/Logo.h"
 #include "TextLabel/TextLabel.h"
@@ -43,6 +44,9 @@ class MainWidget : public QWidget
     /// @brief The toggle button that enables/disables noise cancellation.
     ToggleButton* mMicNoiseToggleButton;
 
+    TextLabel* mGateText;
+    GateSlider* mGateSlider;
+
     /// @brief The main vertical layout of the widget.
     QVBoxLayout* mLayout;
     /// @brief The horizontal layout that contains the logo and the application
@@ -57,6 +61,8 @@ class MainWidget : public QWidget
     /// @brief The horizontal layout that contains the "Noise Cancellation"
     /// label and the toggle button.
     QHBoxLayout* mMicNoiseToggleLayout;
+
+    QVBoxLayout* mNoiseGateLayout;
 
     /// @brief Audio stream manager class.
     AudioStream mAudioStream;

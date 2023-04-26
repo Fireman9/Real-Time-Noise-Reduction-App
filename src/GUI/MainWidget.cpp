@@ -15,6 +15,10 @@ MainWidget::MainWidget(QWidget* parent) : QWidget(parent)
     logo = new Logo("./images/logo.png", this);
     mMicIcon = new Icon("./images/mic.png", QSize(20, 20), this);
 
+    mGateText =
+        new TextLabel("Noise Gate:", QFont("Arial", 12), Qt::AlignLeft, this);
+    mGateSlider = new GateSlider(this);
+
     mLayout = new QVBoxLayout(this);
 
     mCurMicIndex = 0;
@@ -60,10 +64,16 @@ void MainWidget::construct()
     mMicNoiseToggleLayout = new QHBoxLayout();
     mMicNoiseToggleLayout->addWidget(mMicNoiseToggleText);
     mMicNoiseToggleLayout->addWidget(mMicNoiseToggleButton);
+    mMicNoiseToggleLayout->setContentsMargins(0, 0, 0, 20);
+
+    mNoiseGateLayout = new QVBoxLayout();
+    mNoiseGateLayout->addWidget(mGateText);
+    mNoiseGateLayout->addWidget(mGateSlider);
 
     mLayout->addLayout(mLogoNameLayout);
     mLayout->addLayout(mMicDropDownLayout);
     mLayout->addLayout(mMicNoiseToggleLayout);
+    mLayout->addLayout(mNoiseGateLayout);
 
     setLayout(mLayout);
 }
@@ -78,7 +88,7 @@ void MainWidget::adjustWindowSettings()
     // set sizes
     mMicDropDownList->setMaximumWidth(320);
     this->setMinimumWidth(320);
-    this->setMinimumHeight(180);
+    this->setMinimumHeight(280);
 
     // set to minimum possible size
     this->adjustSize();

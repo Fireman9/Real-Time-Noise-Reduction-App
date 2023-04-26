@@ -28,14 +28,16 @@ set(HEADERS src/Stream/AudioStream.h src/Stream/AudioStreamException.h
     src/Util/Timer.h
     src/GUI/MainWidget.h src/GUI/Logo/Logo.h
     src/GUI/DropDownList/DropDownList.h src/GUI/ToggleButton/ToggleButton.h
-    src/GUI/TextLabel/TextLabel.h src/GUI/Icon/Icon.h)
+    src/GUI/TextLabel/TextLabel.h src/GUI/Icon/Icon.h
+    src/GUI/GateSlider/GateSlider.h)
 
 set(SOURCES src/main.cpp src/Stream/AudioStream.cpp
     src/Stream/AudioStreamException.cpp src/AudioFile/AudioFile.cpp
     src/Util/Timer.cpp src/Filters/NoiseGate.cpp
     src/GUI/MainWidget.cpp src/GUI/Logo/Logo.cpp
     src/GUI/DropDownList/DropDownList.cpp src/GUI/ToggleButton/ToggleButton.cpp
-    src/GUI/TextLabel/TextLabel.cpp src/GUI/Icon/Icon.cpp)
+    src/GUI/TextLabel/TextLabel.cpp src/GUI/Icon/Icon.cpp
+    src/GUI/GateSlider/GateSlider.cpp)
 
 add_executable(Sandbox ${HEADERS} ${SOURCES})
 
