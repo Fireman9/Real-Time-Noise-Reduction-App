@@ -1,6 +1,7 @@
 #ifndef NOISE_GATE_H
 #define NOISE_GATE_H
 
+#include <QObject>
 #include <cmath>
 #include <vector>
 
@@ -8,8 +9,10 @@
 /// applies a threshold dB to an audio signal and sets samples below that
 /// threshold to 0. The class takes a threshold value as input during
 /// initialization and processes audio frames through its process method.
-class NoiseGate
+class NoiseGate : public QObject
 {
+    Q_OBJECT
+
   private:
     /// @brief A private member variable that stores the threshold value in dB
     /// used to gate the audio signal.
