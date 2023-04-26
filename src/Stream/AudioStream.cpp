@@ -138,6 +138,9 @@ int AudioStream::process_callback(const void* inputBuffer, void* outputBuffer,
     // get output results vector from tensor
     std::vector<float> outputBufferVector = outputTensor.get_data<float>();
 
+    // use noise gate
+    stream->mNoiseGate.process(outputBufferVector);
+
     if (inputBuffer == NULL) {
         for (int i = 0; i < framesPerBuffer; i++) {
             *out++ = 0;

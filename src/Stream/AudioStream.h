@@ -10,6 +10,7 @@
 #include <cppflow/cppflow.h>
 #include <portaudio.h>
 
+#include "../Filters/NoiseGate.h"
 #include "AudioStreamException.h"
 
 class AudioStream
@@ -48,6 +49,9 @@ class AudioStream
     /// @brief Function to retrieve all input devices available in the system.
     /// @return Vector with the names of the input devices.
     std::vector<std::string> getAllInputDevices();
+
+    /// @brief The class object that is responsible for noise gating.
+    NoiseGate mNoiseGate;
 };
 
 #endif // SANDBOXCLION_AUDIOSTREAM_H
