@@ -32,7 +32,7 @@ set(HEADERS src/Stream/AudioStream.h src/Stream/AudioStreamException.h
 
 set(SOURCES src/main.cpp src/Stream/AudioStream.cpp
     src/Stream/AudioStreamException.cpp src/AudioFile/AudioFile.cpp
-    src/Util/Timer.cpp
+    src/Util/Timer.cpp src/Filters/NoiseGate.cpp
     src/GUI/MainWidget.cpp src/GUI/Logo/Logo.cpp
     src/GUI/DropDownList/DropDownList.cpp src/GUI/ToggleButton/ToggleButton.cpp
     src/GUI/TextLabel/TextLabel.cpp src/GUI/Icon/Icon.cpp)
