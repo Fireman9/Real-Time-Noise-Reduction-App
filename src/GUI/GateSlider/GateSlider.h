@@ -42,6 +42,10 @@ class GateSlider : public QWidget
     /// @param parent The parent widget parameter.
     GateSlider(QWidget* parent = nullptr);
 
+    /// @brief Getter function to retrieve slider.
+    /// @return Pointer to slider.
+    QSlider* getSlider();
+
   private slots:
     /// @brief Private slot for connecting spin box value to slider.
     /// @param value Selected by slider value.

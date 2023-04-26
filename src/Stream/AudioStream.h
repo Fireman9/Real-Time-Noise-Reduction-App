@@ -50,8 +50,9 @@ class AudioStream
     /// @return Vector with the names of the input devices.
     std::vector<std::string> getAllInputDevices();
 
-    /// @brief The class object that is responsible for noise gating.
-    NoiseGate mNoiseGate;
+    /// @brief The class object smart pointer which is responsible for noise
+    /// gating.
+    std::unique_ptr<NoiseGate> mNoiseGate;
 };
 
 #endif // SANDBOXCLION_AUDIOSTREAM_H

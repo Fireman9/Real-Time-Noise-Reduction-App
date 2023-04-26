@@ -76,3 +76,8 @@ void GateSlider::onSpinBoxChanged(int value)
 {
     mSlider->setValue(value);
 }
+
+QSlider* GateSlider::getSlider()
+{
+    return mSlider;
+}

@@ -21,6 +21,7 @@ MainWidget::MainWidget(QWidget* parent) : QWidget(parent)
 
     mLayout = new QVBoxLayout(this);
 
+    mAudioStream = std::make_unique<AudioStream>();
     mCurMicIndex = 0;
 
     // Initialize system tray and its menu
@@ -42,7 +43,7 @@ MainWidget::MainWidget(QWidget* parent) : QWidget(parent)
 void MainWidget::addAllMicToList()
 {
     mMicDropDownList->addItem("--Nothing selected--");
-    for (std::string device : mAudioStream.getAllInputDevices()) {
+    for (std::string device : mAudioStream.get()->getAllInputDevices()) {
         mMicDropDownList->addItem(QString::fromStdString(device));
     }
 }
@@ -130,12 +131,16 @@ void MainWidget::connectAll()
 
     // on system tray menu exit option click - close app
     connect(mExitAction, &QAction::triggered, this, &MainWidget::onExitAction);
+
+    // on slider change value - set new noise gate threshold
+    connect(mGateSlider->getSlider(), &QSlider::valueChanged,
+            mAudioStream.get()->mNoiseGate.get(), &NoiseGate::setThreshold);
 }
 
 void MainWidget::getMicDeviceIndex()
 {
     if (mMicDropDownList->currentIndex() != 0) {
-        mCurMicIndex = mAudioStream.get_device_id_by_name(
+        mCurMicIndex = mAudioStream.get()->get_device_id_by_name(
             mMicDropDownList->currentText().toStdString());
         printf("Current mic index: %d\n", mCurMicIndex);
     } else {
@@ -149,10 +154,10 @@ void MainWidget::reduceNoise()
     if (mMicNoiseToggleButton->isChecked()) {
         // open stream to selected microphone
         // TODO audio driver setting
-        mAudioStream.open_stream(5);
-        // mAudioStream.open_stream(mCurMicIndex);
+        mAudioStream.get()->open_stream(5);
+        // mAudioStream.get()->open_stream(mCurMicIndex);
     } else {
-        mAudioStream.close_stream();
+        mAudioStream.get()->close_stream();
     }
 }
 

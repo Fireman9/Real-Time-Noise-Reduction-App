@@ -10,6 +10,7 @@
 #include <QSystemTrayIcon>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <memory>
 
 #include "../Stream/AudioStream.h"
 #include "DropDownList/DropDownList.h"
@@ -64,8 +65,8 @@ class MainWidget : public QWidget
 
     QVBoxLayout* mNoiseGateLayout;
 
-    /// @brief Audio stream manager class.
-    AudioStream mAudioStream;
+    /// @brief Audio stream manager class smart pointer.
+    std::unique_ptr<AudioStream> mAudioStream;
     /// @brief Current microphone index selected for noise reduction
     int mCurMicIndex;
 

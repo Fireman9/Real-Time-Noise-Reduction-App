@@ -12,6 +12,8 @@ AudioStream::AudioStream(std::string modelFilepath) : m_stream(nullptr)
     mBlockLen = 1536;
 
     mModel = std::make_unique<cppflow::model>(modelFilepath);
+
+    mNoiseGate = std::make_unique<NoiseGate>(-100);
 }
 
 AudioStream::~AudioStream()
@@ -139,7 +141,7 @@ int AudioStream::process_callback(const void* inputBuffer, void* outputBuffer,
     std::vector<float> outputBufferVector = outputTensor.get_data<float>();
 
     // use noise gate
-    stream->mNoiseGate.process(outputBufferVector);
+    stream->mNoiseGate.get()->process(outputBufferVector);
 
     if (inputBuffer == NULL) {
         for (int i = 0; i < framesPerBuffer; i++) {
