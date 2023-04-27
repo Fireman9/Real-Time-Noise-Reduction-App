@@ -1,6 +1,7 @@
 #ifndef SANDBOXCLION_AUDIOSTREAM_H
 #define SANDBOXCLION_AUDIOSTREAM_H
 
+#include <QObject>
 #include <algorithm>
 #include <iostream>
 #include <memory>
@@ -13,8 +14,10 @@
 #include "../Filters/NoiseGate.h"
 #include "AudioStreamException.h"
 
-class AudioStream
+class AudioStream : public QObject
 {
+    Q_OBJECT
+
   private:
     PaStream* m_stream;
 
@@ -53,6 +56,14 @@ class AudioStream
     /// @brief The class object smart pointer which is responsible for noise
     /// gating.
     std::unique_ptr<NoiseGate> mNoiseGate;
+
+  signals:
+    /// @brief
+    /// @param outBuffer
+    void tick(int value);
+    /// @brief
+    /// @param outBuffer
+    void tickGated(std::vector<float> outBuffer);
 };
 
 #endif // SANDBOXCLION_AUDIOSTREAM_H

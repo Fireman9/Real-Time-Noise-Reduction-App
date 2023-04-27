@@ -135,6 +135,10 @@ void MainWidget::connectAll()
     // on slider change value - set new noise gate threshold
     connect(mGateSlider->getSlider(), &QSlider::valueChanged,
             mAudioStream.get()->mNoiseGate.get(), &NoiseGate::setThreshold);
+
+    // set volume bar value on on receipt of a sound signal
+    connect(mAudioStream.get(), &AudioStream::tick, mGateSlider->getVolumeBar(),
+            &QProgressBar::setValue);
 }
 
 void MainWidget::getMicDeviceIndex()
@@ -158,6 +162,8 @@ void MainWidget::reduceNoise()
         // mAudioStream.get()->open_stream(mCurMicIndex);
     } else {
         mAudioStream.get()->close_stream();
+        // set volume leveler value to zero
+        mGateSlider->getVolumeBar()->setValue(-100);
     }
 }
 

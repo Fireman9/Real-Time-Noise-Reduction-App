@@ -140,8 +140,19 @@ int AudioStream::process_callback(const void* inputBuffer, void* outputBuffer,
     // get output results vector from tensor
     std::vector<float> outputBufferVector = outputTensor.get_data<float>();
 
+    // get max amplitude value from output buffer amplitudes
+    float maxAmplitude =
+        *std::max_element(outputBufferVector.begin(), outputBufferVector.end());
+    // calculate max amplitude in dB
+    int valueDb = 20 * log10(maxAmplitude);
+    // emit signal with max output value
+    emit stream->tick(valueDb);
+
     // use noise gate
     stream->mNoiseGate.get()->process(outputBufferVector);
+
+    // emit signal with gated output values
+    // emit stream->tickGated(outputBufferVector);
 
     if (inputBuffer == NULL) {
         for (int i = 0; i < framesPerBuffer; i++) {

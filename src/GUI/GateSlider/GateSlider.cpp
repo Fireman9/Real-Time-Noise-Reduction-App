@@ -12,6 +12,10 @@ GateSlider::GateSlider(QWidget* parent) : QWidget(parent)
     mVolume->setMaximum(0);
     mVolume->setValue(-100);
     mVolume->setTextVisible(false);
+    mVolume->setStyleSheet(R"(
+        QProgressBar::chunk {
+            background-color: green;
+        })");
 
     // setup slider
     mSlider->setOrientation(Qt::Horizontal);
@@ -82,7 +86,7 @@ QSlider* GateSlider::getSlider()
     return mSlider;
 }
 
-QProgressBar* GateSlider::getProgressBar()
+QProgressBar* GateSlider::getVolumeBar()
 {
     return mVolume;
 }

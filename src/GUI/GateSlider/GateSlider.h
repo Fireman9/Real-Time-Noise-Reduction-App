@@ -3,6 +3,7 @@
 
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QPalette>
 #include <QProgressBar>
 #include <QSlider>
 #include <QSpinBox>
@@ -47,7 +48,7 @@ class GateSlider : public QWidget
     QSlider* getSlider();
     /// @brief Getter function to retrieve progress bar.
     /// @return Pointer to progress bar.
-    QProgressBar* getProgressBar();
+    QProgressBar* getVolumeBar();
 
   private slots:
     /// @brief Private slot for connecting spin box value to slider.
