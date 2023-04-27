@@ -45,6 +45,9 @@ class GateSlider : public QWidget
     /// @brief Getter function to retrieve slider.
     /// @return Pointer to slider.
     QSlider* getSlider();
+    /// @brief Getter function to retrieve progress bar.
+    /// @return Pointer to progress bar.
+    QProgressBar* getProgressBar();
 
   private slots:
     /// @brief Private slot for connecting spin box value to slider.

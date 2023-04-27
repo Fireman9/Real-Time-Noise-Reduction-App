@@ -81,3 +81,8 @@ QSlider* GateSlider::getSlider()
 {
     return mSlider;
 }
+
+QProgressBar* GateSlider::getProgressBar()
+{
+    return mVolume;
+}
