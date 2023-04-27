@@ -6,7 +6,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_TOOLCHAIN_FILE "C:/vcpkg/scripts/buildsystems/vcpkg.cmake")
-set(CMAKE_PREFIX_PATH "C:/Qt/6.4.3/mingw_64/lib/cmake")
+set(CMAKE_PREFIX_PATH "C:/Qt/6.5.0/mingw_64/lib/cmake")
 
 # import vcpkg
 include_directories("C:/vcpkg/installed/x64-windows/include")
@@ -19,7 +19,7 @@ link_directories("C:/Users/Admin/Documents/Projects/tensorflow-c-api/lib")
 # import cppflow
 include_directories("C:/Program Files (x86)/cppflow/include")
 
-find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Charts)
 find_package(cppflow REQUIRED)
 
 set(HEADERS src/Stream/AudioStream.h src/Stream/AudioStreamException.h
@@ -29,7 +29,7 @@ set(HEADERS src/Stream/AudioStream.h src/Stream/AudioStreamException.h
     src/GUI/MainWidget.h src/GUI/Logo/Logo.h
     src/GUI/DropDownList/DropDownList.h src/GUI/ToggleButton/ToggleButton.h
     src/GUI/TextLabel/TextLabel.h src/GUI/Icon/Icon.h
-    src/GUI/GateSlider/GateSlider.h)
+    src/GUI/GateSlider/GateSlider.h src/GUI/AudioChart/AudioChart.h)
 
 set(SOURCES src/main.cpp src/Stream/AudioStream.cpp
     src/Stream/AudioStreamException.cpp src/AudioFile/AudioFile.cpp
@@ -37,7 +37,7 @@ set(SOURCES src/main.cpp src/Stream/AudioStream.cpp
     src/GUI/MainWidget.cpp src/GUI/Logo/Logo.cpp
     src/GUI/DropDownList/DropDownList.cpp src/GUI/ToggleButton/ToggleButton.cpp
     src/GUI/TextLabel/TextLabel.cpp src/GUI/Icon/Icon.cpp
-    src/GUI/GateSlider/GateSlider.cpp)
+    src/GUI/GateSlider/GateSlider.cpp src/GUI/AudioChart/AudioChart.cpp)
 
 add_executable(Sandbox ${HEADERS} ${SOURCES})
 
@@ -45,7 +45,7 @@ target_link_libraries(Sandbox portAudio)
 target_link_libraries(Sandbox sndfile)
 target_link_libraries(Sandbox tensorflow)
 target_link_libraries(Sandbox cppflow::cppflow)
-target_link_libraries(Sandbox Qt::Core Qt::Gui Qt::Widgets)
+target_link_libraries(Sandbox Qt::Core Qt::Gui Qt::Widgets Qt::Charts)
 
 if(WIN32)
     set(DEBUG_SUFFIX)
@@ -74,7 +74,7 @@ if(WIN32)
             "$<TARGET_FILE_DIR:${PROJECT_NAME}>/plugins/platforms/")
     endif()
 
-    foreach(QT_LIB Core Gui Widgets)
+    foreach(QT_LIB Core Gui Widgets Charts)
         add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy
             "${QT_INSTALL_PATH}/bin/Qt6${QT_LIB}${DEBUG_SUFFIX}.dll"
