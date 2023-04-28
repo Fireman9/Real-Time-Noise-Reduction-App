@@ -189,7 +189,7 @@ class Model():
 
         # building model
         # input layer for time signal
-        time_signal = Input(batch_shape=(1, self.block_len))
+        time_signal = Input(batch_shape=(1, self.block_len), name="main_input")
         # calculating fft
         mag, phase = Lambda(self.fft_lambda_layer)(time_signal)
 
@@ -217,7 +217,8 @@ class Model():
         x = Multiply()([encoded_frames, mask_2])
 
         # back to time domain
-        x = Conv1D(self.block_len, 1, padding='causal', use_bias=False)(x)
+        x = Conv1D(self.block_len, 1, padding='causal',
+                   use_bias=False, name="main_output")(x)
 
         # create model
         self.model = tf.keras.Model(inputs=time_signal, outputs=x)
@@ -252,7 +253,7 @@ class Model():
         self.model.load_weights(weights_file_path)
 
         # save model
-        tf.saved_model.save(self.model, target_name)
+        self.model.save(target_name, save_format="tf")
 
     def train_model(self, run_name,
                     path_train_noisy, path_train_clean,
