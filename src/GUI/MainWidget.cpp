@@ -12,6 +12,7 @@ MainWidget::MainWidget(QWidget* parent) : QWidget(parent)
 
     mMicDropDownList = new DropDownList(this);
     mMicNoiseToggleButton = new ToggleButton(this);
+    mMicNoiseToggleButton->setDisabled(true);
     logo = new Logo("./images/logo.png", this);
     mMicIcon = new Icon("./images/mic.png", QSize(20, 20), this);
 
@@ -159,8 +160,14 @@ void MainWidget::getMicDeviceIndex()
         mCurMicIndex = mAudioStream.get()->get_device_id_by_name(
             mMicDropDownList->currentText().toStdString());
         printf("Current mic index: %d\n", mCurMicIndex);
+
+        // enable toggle button
+        mMicNoiseToggleButton->setEnabled(true);
     } else {
         printf("Current mic: nothing selected\n");
+
+        // disable toggle button
+        mMicNoiseToggleButton->setEnabled(false);
     }
 }
 
@@ -168,11 +175,17 @@ void MainWidget::reduceNoise()
 {
     // if the toggle button that enables/disables noise cancellation is checked
     if (mMicNoiseToggleButton->isChecked()) {
-        // open stream to selected microphone
+        // disable drop-down list
+        mMicDropDownList->setDisabled(true);
+
         // TODO audio driver setting
+        // open stream to selected microphone
         mAudioStream.get()->open_stream(5);
         // mAudioStream.get()->open_stream(mCurMicIndex);
     } else {
+        // enable drop-down list
+        mMicDropDownList->setDisabled(false);
+
         mAudioStream.get()->close_stream();
         // set volume leveler value to zero
         mGateSlider->getVolumeBar()->setValue(-100);
