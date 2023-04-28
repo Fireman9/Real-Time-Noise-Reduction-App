@@ -22,8 +22,7 @@ AudioStream::~AudioStream()
     Pa_Terminate();
 }
 
-// TODO: 1 channel -> 2 channels transfer, getting channelCount from device,
-//  constants, input/output setup functions
+// TODO: input/output setup functions
 void AudioStream::open_stream(int output_device_id)
 {
     if (m_stream) {
@@ -36,7 +35,7 @@ void AudioStream::open_stream(int output_device_id)
         throw AudioStreamException("Error: No default input device.\n");
     }
     input_params.channelCount = 1;
-    input_params.sampleFormat = paFloat32; // move to constants
+    input_params.sampleFormat = paFloat32;
     input_params.suggestedLatency =
         Pa_GetDeviceInfo(input_params.device)->defaultLowInputLatency;
     input_params.hostApiSpecificStreamInfo = nullptr;
@@ -47,7 +46,7 @@ void AudioStream::open_stream(int output_device_id)
         throw AudioStreamException(paInvalidDevice);
     }
     output_params.channelCount = 1;
-    output_params.sampleFormat = paFloat32; // move to constants
+    output_params.sampleFormat = paFloat32;
     output_params.suggestedLatency =
         Pa_GetDeviceInfo(output_params.device)->defaultLowOutputLatency;
     output_params.hostApiSpecificStreamInfo = nullptr;
@@ -64,8 +63,7 @@ void AudioStream::open_stream(int output_device_id)
     }
 }
 
-// TODO: 1 channel -> 2 channels transfer, getting channelCount from device,
-//  constants, input/output setup functions
+// TODO: input/output setup functions
 void AudioStream::open_stream(int input_device_id, int output_device_id)
 {
     if (m_stream) {
@@ -106,7 +104,6 @@ void AudioStream::open_stream(int input_device_id, int output_device_id)
     }
 }
 
-// TODO: rework all
 int AudioStream::process_callback(const void* inputBuffer, void* outputBuffer,
                                   unsigned long framesPerBuffer,
                                   const PaStreamCallbackTimeInfo* timeInfo,
