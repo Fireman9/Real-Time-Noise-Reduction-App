@@ -13,6 +13,7 @@
 #include <memory>
 
 #include "../Stream/AudioStream.h"
+#include "AudioChart/AudioChart.h"
 #include "DropDownList/DropDownList.h"
 #include "GateSlider/GateSlider.h"
 #include "Icon/Icon.h"
@@ -45,8 +46,13 @@ class MainWidget : public QWidget
     /// @brief The toggle button that enables/disables noise cancellation.
     ToggleButton* mMicNoiseToggleButton;
 
+    /// @brief The label that displays the "Noise Gate" text before gate slider.
     TextLabel* mGateText;
+    /// @brief The volume leveler and gate slider for it.
     GateSlider* mGateSlider;
+
+    /// @brief The real-time audio chart widget.
+    AudioChart* mAudioChart;
 
     /// @brief The main vertical layout of the widget.
     QVBoxLayout* mLayout;
@@ -63,7 +69,12 @@ class MainWidget : public QWidget
     /// label and the toggle button.
     QHBoxLayout* mMicNoiseToggleLayout;
 
+    /// @brief The vertical layout that contains "Noise Gate" label, volume
+    /// leveler and gate slider for it.
     QVBoxLayout* mNoiseGateLayout;
+
+    /// @brief The vertical layout that contains real-time audio chart.
+    QVBoxLayout* mAudioChartLayout;
 
     /// @brief Audio stream manager class smart pointer.
     std::unique_ptr<AudioStream> mAudioStream;
@@ -89,6 +100,10 @@ class MainWidget : public QWidget
     void connectAll();
 
   protected:
+    /// @brief Overridden event handler to monitor the minimise event for window
+    /// and tray management.
+    /// @param e Event pointer.
+    /// @return Parent function QWidget::event result.
     virtual bool event(QEvent* e) override;
 
   public:

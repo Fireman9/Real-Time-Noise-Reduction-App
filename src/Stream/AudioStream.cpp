@@ -152,7 +152,7 @@ int AudioStream::process_callback(const void* inputBuffer, void* outputBuffer,
     stream->mNoiseGate.get()->process(outputBufferVector);
 
     // emit signal with gated output values
-    // emit stream->tickGated(outputBufferVector);
+    emit stream->tickGated(maxAmplitude);
 
     if (inputBuffer == NULL) {
         for (int i = 0; i < framesPerBuffer; i++) {

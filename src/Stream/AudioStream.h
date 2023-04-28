@@ -58,12 +58,14 @@ class AudioStream : public QObject
     std::unique_ptr<NoiseGate> mNoiseGate;
 
   signals:
-    /// @brief
-    /// @param outBuffer
+    /// @brief The custom signal for passing the maximum amplitude value in dB
+    /// on sound input.
+    /// @param value The maximum amplitude value in dB.
     void tick(int value);
-    /// @brief
-    /// @param outBuffer
-    void tickGated(std::vector<float> outBuffer);
+    /// @brief The custom signal for passing the maximum amplitude value on
+    /// sound input.
+    /// @param outBuffer The maximum amplitude value.
+    void tickGated(float value);
 };
 
 #endif // SANDBOXCLION_AUDIOSTREAM_H

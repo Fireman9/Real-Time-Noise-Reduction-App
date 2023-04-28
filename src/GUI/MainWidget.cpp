@@ -19,6 +19,8 @@ MainWidget::MainWidget(QWidget* parent) : QWidget(parent)
         new TextLabel("Noise Gate:", QFont("Arial", 12), Qt::AlignLeft, this);
     mGateSlider = new GateSlider(this);
 
+    mAudioChart = new AudioChart(this);
+
     mLayout = new QVBoxLayout(this);
 
     mAudioStream = std::make_unique<AudioStream>();
@@ -70,11 +72,16 @@ void MainWidget::construct()
     mNoiseGateLayout = new QVBoxLayout();
     mNoiseGateLayout->addWidget(mGateText);
     mNoiseGateLayout->addWidget(mGateSlider);
+    mNoiseGateLayout->setContentsMargins(0, 0, 0, 20);
+
+    mAudioChartLayout = new QVBoxLayout();
+    mAudioChartLayout->addWidget(mAudioChart);
 
     mLayout->addLayout(mLogoNameLayout);
     mLayout->addLayout(mMicDropDownLayout);
     mLayout->addLayout(mMicNoiseToggleLayout);
     mLayout->addLayout(mNoiseGateLayout);
+    mLayout->addLayout(mAudioChartLayout);
 
     setLayout(mLayout);
 }
@@ -82,14 +89,15 @@ void MainWidget::construct()
 void MainWidget::adjustWindowSettings()
 {
     setWindowTitle("RTNR");
-    setWindowIcon(QIcon("C:/Users/Admin/Desktop/logo.png"));
+    setWindowIcon(QIcon("./images/logo.png"));
     // remove maximize button
     setWindowFlags(windowFlags() & ~Qt::WindowMaximizeButtonHint);
 
     // set sizes
     mMicDropDownList->setMaximumWidth(320);
+    mAudioChart->setMaximumHeight(200);
     this->setMinimumWidth(320);
-    this->setMinimumHeight(280);
+    this->setMinimumHeight(540);
 
     // set to minimum possible size
     this->adjustSize();
@@ -136,9 +144,13 @@ void MainWidget::connectAll()
     connect(mGateSlider->getSlider(), &QSlider::valueChanged,
             mAudioStream.get()->mNoiseGate.get(), &NoiseGate::setThreshold);
 
-    // set volume bar value on on receipt of a sound signal
+    // set volume bar value on receipt of a sound signal
     connect(mAudioStream.get(), &AudioStream::tick, mGateSlider->getVolumeBar(),
             &QProgressBar::setValue);
+
+    // update audio chart on receipt of a sound signal
+    connect(mAudioStream.get(), &AudioStream::tickGated, mAudioChart,
+            &AudioChart::appendData);
 }
 
 void MainWidget::getMicDeviceIndex()
