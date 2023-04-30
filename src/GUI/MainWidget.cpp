@@ -60,6 +60,7 @@ void MainWidget::construct()
     mMicLayout = new QHBoxLayout();
     mMicLayout->addWidget(mMicIcon);
     mMicLayout->addWidget(mSelectMicText);
+    mMicLayout->setAlignment(Qt::AlignVCenter);
 
     mMicDropDownLayout = new QVBoxLayout();
     mMicDropDownLayout->addLayout(mMicLayout);
@@ -68,6 +69,7 @@ void MainWidget::construct()
     mMicNoiseToggleLayout = new QHBoxLayout();
     mMicNoiseToggleLayout->addWidget(mMicNoiseToggleText);
     mMicNoiseToggleLayout->addWidget(mMicNoiseToggleButton);
+    mMicNoiseToggleLayout->setAlignment(Qt::AlignVCenter);
     mMicNoiseToggleLayout->setContentsMargins(0, 0, 0, 20);
 
     mNoiseGateLayout = new QVBoxLayout();
@@ -97,8 +99,11 @@ void MainWidget::adjustWindowSettings()
     // set sizes
     mMicDropDownList->setMaximumWidth(320);
     mAudioChart->setMaximumHeight(200);
+    mGateText->setMinimumHeight(20);
+
+    // set window size
     this->setMinimumWidth(320);
-    this->setMinimumHeight(540);
+    this->setMinimumHeight(500);
 
     // set to minimum possible size
     this->adjustSize();
