@@ -31,7 +31,7 @@ class AudioStream : public QObject
     /// @brief Trained noise reduction model smart pointer.
     std::unique_ptr<cppflow::model> mModel;
 
-    /// @brief Static method representing the process callback function.
+    /// @brief Static function representing the process callback function.
     /// @param inputBuffer Pointer to the input buffer.
     /// @param outputBuffer Pointer to the output buffer.
     /// @param framesPerBuffer Number of frames per buffer.
@@ -44,6 +44,12 @@ class AudioStream : public QObject
                                 const PaStreamCallbackTimeInfo* timeInfo,
                                 PaStreamCallbackFlags statusFlags,
                                 void* userData);
+
+    /// @brief Private function to setup device parameters.
+    /// @param params Reference to stream parameters object.
+    /// @param deviceId Devide ID. Defaults to default device ID.
+    void setupDevice(PaStreamParameters& params,
+                     int deviceId = Pa_GetDefaultInputDevice());
 
   public:
     /// @brief Constructor for the AudioStream class.
