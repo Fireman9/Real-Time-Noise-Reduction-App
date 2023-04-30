@@ -1,6 +1,6 @@
 #include "AudioStream.h"
 
-AudioStream::AudioStream(std::string modelFilepath) : m_stream(nullptr)
+AudioStream::AudioStream(std::string modelFilepath) : mStream(nullptr)
 {
     PaError err = Pa_Initialize();
     if (err != paNoError) {
@@ -18,57 +18,57 @@ AudioStream::AudioStream(std::string modelFilepath) : m_stream(nullptr)
 
 AudioStream::~AudioStream()
 {
-    close_stream();
+    closeStream();
     Pa_Terminate();
 }
 
-void AudioStream::open_stream(int output_device_id)
+void AudioStream::openStream(int outDeviceId)
 {
-    if (m_stream) {
-        close_stream();
+    if (mStream) {
+        closeStream();
     }
 
     // setup input device parameters
-    PaStreamParameters input_params;
-    setupDevice(input_params);
+    PaStreamParameters inParams;
+    setupDevice(inParams);
 
     // setup output device parameters
-    PaStreamParameters output_params;
-    setupDevice(output_params, output_device_id);
+    PaStreamParameters outParams;
+    setupDevice(outParams, outDeviceId);
 
-    PaError err = Pa_OpenStream(&m_stream, &input_params, &output_params, mSR,
-                                mBlockLen, 0, process_callback, this);
+    PaError err = Pa_OpenStream(&mStream, &inParams, &outParams, mSR, mBlockLen,
+                                0, processCallback, this);
     if (err != paNoError) {
         throw AudioStreamException(err);
     }
 
-    err = Pa_StartStream(m_stream);
+    err = Pa_StartStream(mStream);
     if (err != paNoError) {
         throw AudioStreamException(err);
     }
 }
 
-void AudioStream::open_stream(int input_device_id, int output_device_id)
+void AudioStream::openStream(int inDeviceId, int outDeviceId)
 {
-    if (m_stream) {
-        close_stream();
+    if (mStream) {
+        closeStream();
     }
 
     // setup input device parameters
-    PaStreamParameters input_params;
-    setupDevice(input_params, input_device_id);
+    PaStreamParameters inParams;
+    setupDevice(inParams, inDeviceId);
 
     // setup output device parameters
-    PaStreamParameters output_params;
-    setupDevice(output_params, output_device_id);
+    PaStreamParameters outParams;
+    setupDevice(outParams, outDeviceId);
 
-    PaError err = Pa_OpenStream(&m_stream, &input_params, &output_params, mSR,
-                                mBlockLen, 0, process_callback, &mModel);
+    PaError err = Pa_OpenStream(&mStream, &inParams, &outParams, mSR, mBlockLen,
+                                0, processCallback, &mModel);
     if (err != paNoError) {
         throw AudioStreamException(err);
     }
 
-    err = Pa_StartStream(m_stream);
+    err = Pa_StartStream(mStream);
     if (err != paNoError) {
         throw AudioStreamException(err);
     }
@@ -87,11 +87,11 @@ void AudioStream::setupDevice(PaStreamParameters& params, int deviceId)
     params.hostApiSpecificStreamInfo = nullptr;
 }
 
-int AudioStream::process_callback(const void* inputBuffer, void* outputBuffer,
-                                  unsigned long framesPerBuffer,
-                                  const PaStreamCallbackTimeInfo* timeInfo,
-                                  PaStreamCallbackFlags statusFlags,
-                                  void* userData)
+int AudioStream::processCallback(const void* inputBuffer, void* outputBuffer,
+                                 unsigned long framesPerBuffer,
+                                 const PaStreamCallbackTimeInfo* timeInfo,
+                                 PaStreamCallbackFlags statusFlags,
+                                 void* userData)
 {
     // init and cast inputBuffet void* to float*
     const float* in = (float*)inputBuffer;
@@ -148,24 +148,24 @@ int AudioStream::process_callback(const void* inputBuffer, void* outputBuffer,
     return paContinue;
 }
 
-void AudioStream::close_stream()
+void AudioStream::closeStream()
 {
-    if (m_stream) {
-        PaError err = Pa_StopStream(m_stream);
+    if (mStream) {
+        PaError err = Pa_StopStream(mStream);
         if (err != paNoError) {
             throw AudioStreamException(err);
         }
 
-        err = Pa_CloseStream(m_stream);
+        err = Pa_CloseStream(mStream);
         if (err != paNoError) {
             throw AudioStreamException(err);
         }
 
-        m_stream = nullptr;
+        mStream = nullptr;
     }
 }
 
-int AudioStream::get_device_id_by_name(const std::string& deviceName)
+int AudioStream::getDeviceIdByName(const std::string& deviceName)
 {
     int deviceCount = Pa_GetDeviceCount();
     if (deviceCount < 0) {
@@ -188,7 +188,7 @@ int AudioStream::get_device_id_by_name(const std::string& deviceName)
     return deviceId;
 }
 
-void AudioStream::debug_print_all_devices()
+void AudioStream::debugPrintAllDevices()
 {
     int deviceCount = Pa_GetDeviceCount();
     if (deviceCount < 0) {
@@ -204,7 +204,7 @@ void AudioStream::debug_print_all_devices()
     }
 }
 
-void AudioStream::debug_print_all_input_devices()
+void AudioStream::debugPrintAllInputDevices()
 {
     int deviceCount = Pa_GetDeviceCount();
     if (deviceCount < 0) {
@@ -220,7 +220,7 @@ void AudioStream::debug_print_all_input_devices()
     }
 }
 
-void AudioStream::debug_print_all_output_devices()
+void AudioStream::debugPrintAllOutputDevices()
 {
     int deviceCount = Pa_GetDeviceCount();
     if (deviceCount < 0) {

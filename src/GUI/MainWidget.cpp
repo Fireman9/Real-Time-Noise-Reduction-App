@@ -157,7 +157,7 @@ void MainWidget::connectAll()
 void MainWidget::getMicDeviceIndex()
 {
     if (mMicDropDownList->currentIndex() != 0) {
-        mCurMicIndex = mAudioStream.get()->get_device_id_by_name(
+        mCurMicIndex = mAudioStream.get()->getDeviceIdByName(
             mMicDropDownList->currentText().toStdString());
         printf("Current mic index: %d\n", mCurMicIndex);
 
@@ -180,13 +180,13 @@ void MainWidget::reduceNoise()
 
         // TODO audio driver setting
         // open stream to selected microphone
-        mAudioStream.get()->open_stream(5);
-        // mAudioStream.get()->open_stream(mCurMicIndex);
+        mAudioStream.get()->openStream(5);
+        // mAudioStream.get()->openStream(mCurMicIndex);
     } else {
         // enable drop-down list
         mMicDropDownList->setDisabled(false);
 
-        mAudioStream.get()->close_stream();
+        mAudioStream.get()->closeStream();
         // set volume leveler value to zero
         mGateSlider->getVolumeBar()->setValue(-100);
     }

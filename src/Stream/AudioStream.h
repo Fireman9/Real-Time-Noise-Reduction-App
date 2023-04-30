@@ -21,7 +21,7 @@ class AudioStream : public QObject
 
   private:
     /// @brief Pointer to the audio stream object.
-    PaStream* m_stream;
+    PaStream* mStream;
 
     /// @brief Sample rate.
     int mSR;
@@ -39,11 +39,11 @@ class AudioStream : public QObject
     /// @param statusFlags The status flags.
     /// @param userData Pointer to the user data.
     /// @return The port audio stream callback result.
-    static int process_callback(const void* inputBuffer, void* outputBuffer,
-                                unsigned long framesPerBuffer,
-                                const PaStreamCallbackTimeInfo* timeInfo,
-                                PaStreamCallbackFlags statusFlags,
-                                void* userData);
+    static int processCallback(const void* inputBuffer, void* outputBuffer,
+                               unsigned long framesPerBuffer,
+                               const PaStreamCallbackTimeInfo* timeInfo,
+                               PaStreamCallbackFlags statusFlags,
+                               void* userData);
 
     /// @brief Private function to setup device parameters.
     /// @param params Reference to stream parameters object.
@@ -59,25 +59,25 @@ class AudioStream : public QObject
     ~AudioStream();
 
     /// @brief Function to open the stream from the default input device.
-    /// @param output_device_id The ID of the output device.
+    /// @param outDeviceId The ID of the output device.
     /// @throws AudioStreamException If there is an error opening the stream.
-    void open_stream(int output_device_id);
+    void openStream(int outDeviceId);
     /// @brief Function to open the stream.
-    /// @param input_device_id The ID of the input device.
-    /// @param output_device_id The ID of the output device.
+    /// @param inDeviceId The ID of the input device.
+    /// @param outDeviceId The ID of the output device.
     /// @throws AudioStreamException If there is an error opening the stream.
-    void open_stream(int input_device_id, int output_device_id);
+    void openStream(int inDeviceId, int outDeviceId);
     /// @brief Function to close the audio stream.
-    void close_stream();
+    void closeStream();
 
     /// @brief Function to get the device ID by name.
     /// @param deviceName The name of the device.
     /// @return The device ID.
-    int get_device_id_by_name(const std::string& deviceName);
+    int getDeviceIdByName(const std::string& deviceName);
 
-    void debug_print_all_devices();
-    void debug_print_all_input_devices();
-    void debug_print_all_output_devices();
+    void debugPrintAllDevices();
+    void debugPrintAllInputDevices();
+    void debugPrintAllOutputDevices();
 
     /// @brief Function to retrieve all input devices available in the system.
     /// @return Vector with the names of the input devices.
