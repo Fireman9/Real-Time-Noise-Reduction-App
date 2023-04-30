@@ -1,5 +1,5 @@
-#ifndef SANDBOXCLION_AUDIOSTREAM_H
-#define SANDBOXCLION_AUDIOSTREAM_H
+#ifndef AUDIO_STREAM_H
+#define AUDIO_STREAM_H
 
 #include <QObject>
 #include <algorithm>
@@ -98,4 +98,4 @@ class AudioStream : public QObject
     void tickGated(float value);
 };
 
-#endif // SANDBOXCLION_AUDIOSTREAM_H
+#endif // AUDIO_STREAM_H

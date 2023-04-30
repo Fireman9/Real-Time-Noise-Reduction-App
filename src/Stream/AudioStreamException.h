@@ -1,5 +1,5 @@
-#ifndef SANDBOXCLION_AUDIOSTREAMEXCEPTION_H
-#define SANDBOXCLION_AUDIOSTREAMEXCEPTION_H
+#ifndef AUDIO_STREAM_EXCEPTION_H
+#define AUDIO_STREAM_EXCEPTION_H
 
 #include <stdexcept>
 #include <string>
@@ -19,4 +19,4 @@ class AudioStreamException : public std::exception
     const char* what() const noexcept override;
 };
 
-#endif // SANDBOXCLION_AUDIOSTREAMEXCEPTION_H
+#endif // AUDIO_STREAM_EXCEPTION_H
