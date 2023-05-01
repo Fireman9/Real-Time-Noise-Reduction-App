@@ -7,20 +7,24 @@ MainWidget::MainWidget(QWidget* parent) : QWidget(parent)
                                  QFont("Arial", 14), Qt::AlignCenter, this);
     mSelectMicText =
         new TextLabel("Microphone:", QFont("Arial", 12), Qt::AlignLeft, this);
-    mMicNoiseToggleText = new TextLabel(
-        "Noise Cancellation", QFont("Arial", 12), Qt::AlignVCenter, this);
+    mMicNoiseToggleText = new TextLabel("Noise Reduction", QFont("Arial", 12),
+                                        Qt::AlignVCenter, this);
 
     mMicDropDownList = new DropDownList(this);
     mMicNoiseToggleButton = new ToggleButton(this);
     mMicNoiseToggleButton->setDisabled(true);
     logo = new Logo("./images/logo.png", this);
     mMicIcon = new Icon("./images/mic.png", QSize(20, 20), this);
+    mTestNRButton =
+        new QLabel("<a href =\"whatever\">Test noise reduction</a>", this);
 
     mGateText =
         new TextLabel("Noise Gate:", QFont("Arial", 12), Qt::AlignLeft, this);
     mGateSlider = new GateSlider(this);
 
     mAudioChart = new AudioChart(this);
+
+    mModelTester = new ModelTester(this);
 
     mLayout = new QVBoxLayout(this);
 
@@ -70,7 +74,11 @@ void MainWidget::construct()
     mMicNoiseToggleLayout->addWidget(mMicNoiseToggleText);
     mMicNoiseToggleLayout->addWidget(mMicNoiseToggleButton);
     mMicNoiseToggleLayout->setAlignment(Qt::AlignVCenter);
-    mMicNoiseToggleLayout->setContentsMargins(0, 0, 0, 20);
+
+    mTestNRLayout = new QHBoxLayout();
+    mTestNRLayout->addWidget(mTestNRButton);
+    mTestNRLayout->setAlignment(Qt::AlignRight);
+    mTestNRLayout->setContentsMargins(0, 0, 0, 20);
 
     mNoiseGateLayout = new QVBoxLayout();
     mNoiseGateLayout->addWidget(mGateText);
@@ -83,6 +91,7 @@ void MainWidget::construct()
     mLayout->addLayout(mLogoNameLayout);
     mLayout->addLayout(mMicDropDownLayout);
     mLayout->addLayout(mMicNoiseToggleLayout);
+    mLayout->addLayout(mTestNRLayout);
     mLayout->addLayout(mNoiseGateLayout);
     mLayout->addLayout(mAudioChartLayout);
 
@@ -138,6 +147,10 @@ void MainWidget::connectAll()
     // on toggle button state change - start noise reduction
     connect(mMicNoiseToggleButton, &QCheckBox::stateChanged, this,
             &MainWidget::reduceNoise);
+
+    // on label link click - open dialogue to test noise reduction
+    connect(mTestNRButton, &QLabel::linkActivated, this,
+            &MainWidget::startNRTest);
 
     // process tray icon activation
     connect(mTrayIcon, &QSystemTrayIcon::activated, this,
@@ -231,4 +244,9 @@ void MainWidget::trayIconActivated(QSystemTrayIcon::ActivationReason reason)
 void MainWidget::onExitAction()
 {
     QApplication::quit();
+}
+
+void MainWidget::startNRTest()
+{
+    mModelTester->exec();
 }
