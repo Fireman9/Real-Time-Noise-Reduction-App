@@ -18,7 +18,6 @@
 #include "GateSlider/GateSlider.h"
 #include "Icon/Icon.h"
 #include "Logo/Logo.h"
-#include "ModelTester/ModelTester.h"
 #include "TextLabel/TextLabel.h"
 #include "ToggleButton/ToggleButton.h"
 
@@ -46,8 +45,6 @@ class MainWidget : public QWidget
     DropDownList* mMicDropDownList;
     /// @brief The toggle button that enables/disables noise cancellation.
     ToggleButton* mMicNoiseToggleButton;
-    /// @brief Label link to start the noise reduction test.
-    QLabel* mTestNRButton;
 
     /// @brief The label that displays the "Noise Gate" text before gate slider.
     TextLabel* mGateText;
@@ -56,9 +53,6 @@ class MainWidget : public QWidget
 
     /// @brief The real-time audio chart widget.
     AudioChart* mAudioChart;
-
-    /// @brief Dialog window for starting noise reduction test.
-    ModelTester* mModelTester;
 
     /// @brief The main vertical layout of the widget.
     QVBoxLayout* mLayout;
@@ -74,9 +68,6 @@ class MainWidget : public QWidget
     /// @brief The horizontal layout that contains the "Noise Cancellation"
     /// label and the toggle button.
     QHBoxLayout* mMicNoiseToggleLayout;
-    /// @brief The horizontal layout containing the spacer and label link to
-    /// start the noise reduction test.
-    QHBoxLayout* mTestNRLayout;
 
     /// @brief The vertical layout that contains "Noise Gate" label, volume
     /// leveler and gate slider for it.
@@ -132,8 +123,6 @@ class MainWidget : public QWidget
     void trayIconActivated(QSystemTrayIcon::ActivationReason reason);
     /// @brief Slot function to exit app on tray menu exit option click.
     void onExitAction();
-    /// @brief Slot function to display the noise reduction test dialogue.
-    void startNRTest();
 };
 
 #endif // MAIN_WIDGET_H
