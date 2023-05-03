@@ -1,14 +1,14 @@
 #include "AudioStreamException.h"
 
 AudioStreamException::AudioStreamException(PaError error) :
-    m_description(Pa_GetErrorText(error))
+    mDescription(Pa_GetErrorText(error))
 {}
 
 AudioStreamException::AudioStreamException(const std::string& description) :
-    m_description(description)
+    mDescription(description)
 {}
 
 const char* AudioStreamException::what() const noexcept
 {
-    return m_description.c_str();
+    return mDescription.c_str();
 }
