@@ -28,6 +28,9 @@ class AudioStream : public QObject
     /// @brief One time domain frame size.
     int mBlockLen;
 
+    /// @brief Flag to indicate that the noise reduction is active.
+    bool mReduceNoiseStatus;
+
     /// @brief Trained noise reduction model smart pointer.
     std::unique_ptr<cppflow::model> mModel;
 
@@ -96,6 +99,11 @@ class AudioStream : public QObject
     /// sound input.
     /// @param outBuffer The maximum amplitude value.
     void tickGated(float value);
+
+  public slots:
+    /// @brief Function to set noise reduction status.
+    /// @param status Boolean to set.
+    void setReduceNoise(bool status);
 };
 
 #endif // AUDIO_STREAM_H

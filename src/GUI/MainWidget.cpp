@@ -168,11 +168,17 @@ void MainWidget::getMicDeviceIndex()
 
         // enable toggle button
         mMicNoiseToggleButton->setEnabled(true);
+
+        // open stream to selected microphone
+        mAudioStream.get()->openStream(mCurMicIndex);
     } else {
         printf("Current mic: nothing selected\n");
 
         // disable toggle button
         mMicNoiseToggleButton->setEnabled(false);
+
+        // close stream
+        mAudioStream.get()->closeStream();
     }
 }
 
@@ -183,17 +189,17 @@ void MainWidget::reduceNoise()
         // disable drop-down list
         mMicDropDownList->setDisabled(true);
 
-        // TODO audio driver setting
-        // open stream to selected microphone
-        mAudioStream.get()->openStream(5);
-        // mAudioStream.get()->openStream(mCurMicIndex);
+        // activate noise reduction
+        mAudioStream.get()->setReduceNoise(true);
     } else {
         // enable drop-down list
         mMicDropDownList->setDisabled(false);
 
-        mAudioStream.get()->closeStream();
         // set volume leveler value to zero
         mGateSlider->getVolumeBar()->setValue(-100);
+
+        // disable noise reduction
+        mAudioStream.get()->setReduceNoise(false);
     }
 }
 

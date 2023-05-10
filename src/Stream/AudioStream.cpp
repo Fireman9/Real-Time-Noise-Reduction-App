@@ -11,6 +11,8 @@ AudioStream::AudioStream(std::string modelFilepath) : mStream(nullptr)
     // 1536 = 32 ms for 48k sr
     mBlockLen = 1536;
 
+    mReduceNoiseStatus = false;
+
     mModel = std::make_unique<cppflow::model>(modelFilepath);
 
     mNoiseGate = std::make_unique<NoiseGate>(-100);
@@ -138,10 +140,14 @@ int AudioStream::processCallback(const void* inputBuffer, void* outputBuffer,
         for (int i = 0; i < framesPerBuffer; i++) {
             *out++ = 0;
         }
-    } else {
+    } else if (stream->mReduceNoiseStatus) {
         for (int i = 0; i < framesPerBuffer; i++) {
             // write all values to output
             *out++ = outputBufferVector[i];
+        }
+    } else {
+        for (int i = 0; i < framesPerBuffer; i++) {
+            *out++ = *in++;
         }
     }
 
@@ -255,4 +261,9 @@ std::vector<std::string> AudioStream::getAllInputDevices()
     }
 
     return devices;
+}
+
+void AudioStream::setReduceNoise(bool status)
+{
+    mReduceNoiseStatus = status;
 }
