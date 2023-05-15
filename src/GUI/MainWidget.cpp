@@ -177,6 +177,9 @@ void MainWidget::getMicDeviceIndex()
         // disable toggle button
         mMicNoiseToggleButton->setEnabled(false);
 
+        // set volume leveler value to zero
+        mGateSlider->getVolumeBar()->setValue(-100);
+
         // close stream
         mAudioStream.get()->closeStream();
     }
@@ -194,9 +197,6 @@ void MainWidget::reduceNoise()
     } else {
         // enable drop-down list
         mMicDropDownList->setDisabled(false);
-
-        // set volume leveler value to zero
-        mGateSlider->getVolumeBar()->setValue(-100);
 
         // disable noise reduction
         mAudioStream.get()->setReduceNoise(false);

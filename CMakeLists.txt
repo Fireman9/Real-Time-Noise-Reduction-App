@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(Sandbox VERSION 0.0.1)
+project(RTNR VERSION 0.0.1)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_AUTOMOC ON)
@@ -39,13 +39,13 @@ set(SOURCES src/main.cpp src/Stream/AudioStream.cpp
     src/GUI/TextLabel/TextLabel.cpp src/GUI/Icon/Icon.cpp
     src/GUI/GateSlider/GateSlider.cpp src/GUI/AudioChart/AudioChart.cpp)
 
-add_executable(Sandbox ${HEADERS} ${SOURCES})
+add_executable(RTNR ${HEADERS} ${SOURCES})
 
-target_link_libraries(Sandbox portAudio)
-target_link_libraries(Sandbox sndfile)
-target_link_libraries(Sandbox tensorflow)
-target_link_libraries(Sandbox cppflow::cppflow)
-target_link_libraries(Sandbox Qt::Core Qt::Gui Qt::Widgets Qt::Charts)
+target_link_libraries(RTNR portAudio)
+target_link_libraries(RTNR sndfile)
+target_link_libraries(RTNR tensorflow)
+target_link_libraries(RTNR cppflow::cppflow)
+target_link_libraries(RTNR Qt::Core Qt::Gui Qt::Widgets Qt::Charts)
 
 if(WIN32)
     set(DEBUG_SUFFIX)
