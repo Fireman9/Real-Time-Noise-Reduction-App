@@ -18,7 +18,7 @@ audio_noisy = librosa.resample(audio_noisy, orig_sr=sr, target_sr=16000)
 
 # Calculate the metrics
 pesq_score = pesq(16000, audio_clean, audio_noisy, "wb")
-stoi_score = stoi(audio_noisy, audio_clean, 16000)
+stoi_score = stoi(audio_clean, audio_noisy, 16000)
 
 # Print the results
 print("STOI: {:.2f}".format(stoi_score))
