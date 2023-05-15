@@ -162,8 +162,7 @@ void MainWidget::connectAll()
 void MainWidget::getMicDeviceIndex()
 {
     if (mMicDropDownList->currentIndex() != 0) {
-        mCurMicIndex = mAudioStream.get()->getDeviceIdByName(
-            mMicDropDownList->currentText().toStdString());
+        mCurMicIndex = mMicDropDownList->currentIndex() - 1;
         printf("Current mic index: %d\n", mCurMicIndex);
 
         // enable toggle button
