@@ -26,7 +26,7 @@ print("PESQ: {:.2f}".format(pesq_score))
 
 
 # plot noisy and clean waveforms
-plt.figure(figsize=(12, 3))
+plt.figure(figsize=(12, 4))
 librosa.display.waveshow(audio_noisy, sr=sr)
 librosa.display.waveshow(audio_clean, sr=sr)
 plt.title("Audio waveform")
