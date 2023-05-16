@@ -4,7 +4,7 @@ AudioStream::AudioStream(std::string modelFilepath) : mStream(nullptr)
 {
     PaError err = Pa_Initialize();
     if (err != paNoError) {
-        throw AudioStreamException(err);
+        printf(AudioStreamException(err).what());
     }
 
     mSR = 48000;
@@ -41,12 +41,12 @@ void AudioStream::openStream(int outDeviceId)
     PaError err = Pa_OpenStream(&mStream, &inParams, &outParams, mSR, mBlockLen,
                                 0, processCallback, this);
     if (err != paNoError) {
-        throw AudioStreamException(err);
+        printf(AudioStreamException(err).what());
     }
 
     err = Pa_StartStream(mStream);
     if (err != paNoError) {
-        throw AudioStreamException(err);
+        printf(AudioStreamException(err).what());
     }
 }
 
@@ -67,12 +67,12 @@ void AudioStream::openStream(int inDeviceId, int outDeviceId)
     PaError err = Pa_OpenStream(&mStream, &inParams, &outParams, mSR, mBlockLen,
                                 0, processCallback, &mModel);
     if (err != paNoError) {
-        throw AudioStreamException(err);
+        printf(AudioStreamException(err).what());
     }
 
     err = Pa_StartStream(mStream);
     if (err != paNoError) {
-        throw AudioStreamException(err);
+        printf(AudioStreamException(err).what());
     }
 }
 
@@ -80,7 +80,8 @@ void AudioStream::setupDevice(PaStreamParameters& params, int deviceId)
 {
     params.device = deviceId;
     if (params.device == paNoDevice) {
-        throw AudioStreamException("Error: No default input device.\n");
+        printf(
+            AudioStreamException("Error: No default input device.\n").what());
     }
     params.channelCount = 1;
     params.sampleFormat = paFloat32;
@@ -111,9 +112,10 @@ int AudioStream::processCallback(const void* inputBuffer, void* outputBuffer,
 
     // predict results using model
     cppflow::tensor outputTensor = stream->mModel->operator()(
-        {{"serving_default_main_input:0", inputTensor}},
-        {"StatefulPartitionedCall:0"}
-    )[0];
+        {
+            {"serving_default_main_input:0", inputTensor}
+    },
+        {"StatefulPartitionedCall:0"})[0];
 
     // define the axes along which to remove dimensions of size 1
     std::vector<long long int> axes = {0, 1};
@@ -159,12 +161,12 @@ void AudioStream::closeStream()
     if (mStream) {
         PaError err = Pa_StopStream(mStream);
         if (err != paNoError) {
-            throw AudioStreamException(err);
+            printf(AudioStreamException(err).what());
         }
 
         err = Pa_CloseStream(mStream);
         if (err != paNoError) {
-            throw AudioStreamException(err);
+            printf(AudioStreamException(err).what());
         }
 
         mStream = nullptr;
@@ -175,7 +177,7 @@ int AudioStream::getDeviceIdByName(const std::string& deviceName)
 {
     int deviceCount = Pa_GetDeviceCount();
     if (deviceCount < 0) {
-        throw AudioStreamException(deviceCount);
+        printf(AudioStreamException(deviceCount).what());
     }
 
     int deviceId = -1;
@@ -188,7 +190,8 @@ int AudioStream::getDeviceIdByName(const std::string& deviceName)
     }
 
     if (deviceId < 0) {
-        throw AudioStreamException("Error: No such device with given name.\n");
+        printf(AudioStreamException("Error: No such device with given name.\n")
+                   .what());
     }
 
     return deviceId;
@@ -198,7 +201,7 @@ void AudioStream::debugPrintAllDevices()
 {
     int deviceCount = Pa_GetDeviceCount();
     if (deviceCount < 0) {
-        throw AudioStreamException(deviceCount);
+        printf(AudioStreamException(deviceCount).what());
     }
 
     std::cout << "Available audio devices:" << std::endl;
@@ -214,7 +217,7 @@ void AudioStream::debugPrintAllInputDevices()
 {
     int deviceCount = Pa_GetDeviceCount();
     if (deviceCount < 0) {
-        throw AudioStreamException(deviceCount);
+        printf(AudioStreamException(deviceCount).what());
     }
 
     std::cout << "Available input audio devices:" << std::endl;
@@ -230,7 +233,7 @@ void AudioStream::debugPrintAllOutputDevices()
 {
     int deviceCount = Pa_GetDeviceCount();
     if (deviceCount < 0) {
-        throw AudioStreamException(deviceCount);
+        printf(AudioStreamException(deviceCount).what());
     }
 
     std::cout << "Available output audio devices:" << std::endl;
@@ -248,7 +251,7 @@ std::vector<std::string> AudioStream::getAllInputDevices()
     // get all devices count
     int deviceCount = Pa_GetDeviceCount();
     if (deviceCount < 0) {
-        throw AudioStreamException(deviceCount);
+        printf(AudioStreamException(deviceCount).what());
     }
     // through all devices
     for (int i = 0; i < deviceCount; i++) {
