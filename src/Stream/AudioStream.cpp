@@ -105,6 +105,10 @@ int AudioStream::processCallback(const void* inputBuffer, void* outputBuffer,
 
     // create vector from input values
     std::vector<float> inputBufferVector(in, in + framesPerBuffer);
+
+    // use noise gate
+    stream->mNoiseGate.get()->process(inputBufferVector);
+
     // create tensor from input values
     cppflow::tensor inputTensor(inputBufferVector, {framesPerBuffer});
     // expand dimension to match model input
@@ -112,10 +116,9 @@ int AudioStream::processCallback(const void* inputBuffer, void* outputBuffer,
 
     // predict results using model
     cppflow::tensor outputTensor = stream->mModel->operator()(
-        {
-            {"serving_default_main_input:0", inputTensor}
-    },
-        {"StatefulPartitionedCall:0"})[0];
+        {{"serving_default_main_input:0", inputTensor}},
+        {"StatefulPartitionedCall:0"}
+    )[0];
 
     // define the axes along which to remove dimensions of size 1
     std::vector<long long int> axes = {0, 1};
@@ -131,9 +134,6 @@ int AudioStream::processCallback(const void* inputBuffer, void* outputBuffer,
     int valueDb = 20 * log10(maxAmplitude);
     // emit signal with max output value
     emit stream->tick(valueDb);
-
-    // use noise gate
-    stream->mNoiseGate.get()->process(outputBufferVector);
 
     // emit signal with gated output values
     emit stream->tickGated(maxAmplitude);
