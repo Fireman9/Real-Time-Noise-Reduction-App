@@ -8,6 +8,8 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_TOOLCHAIN_FILE "C:/vcpkg/scripts/buildsystems/vcpkg.cmake")
 set(CMAKE_PREFIX_PATH "C:/Qt/6.5.0/mingw_64/lib/cmake")
 
+enable_testing()
+
 # import vcpkg
 include_directories("C:/vcpkg/installed/x64-windows/include")
 link_directories("C:/vcpkg/installed/x64-windows/lib")
@@ -21,6 +23,18 @@ include_directories("C:/Program Files (x86)/cppflow/include")
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Charts)
 find_package(cppflow REQUIRED)
+
+include(FetchContent)
+include(GoogleTest)
+
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+)
+
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
 
 set(HEADERS src/Stream/AudioStream.h src/Stream/AudioStreamException.h
     src/AudioFile/AudioFile.h src/Filters/Kalman.h
@@ -46,6 +60,13 @@ target_link_libraries(RTNR sndfile)
 target_link_libraries(RTNR tensorflow)
 target_link_libraries(RTNR cppflow::cppflow)
 target_link_libraries(RTNR Qt::Core Qt::Gui Qt::Widgets Qt::Charts)
+
+# Add test cpp file
+add_executable(RTNR_Tests Tests/tests.cpp)
+
+target_link_libraries(RTNR_Tests GTest::gtest GTest::gtest_main)
+
+gtest_discover_tests(RTNR_Tests)
 
 if(WIN32)
     set(DEBUG_SUFFIX)
